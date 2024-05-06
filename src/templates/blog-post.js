@@ -3,18 +3,10 @@ import { graphql } from 'gatsby';
 
 import Layout from '../components/layout';
 import { Seo } from '../components/Seo';
-import { getImage } from 'gatsby-plugin-image';
 import Giscus from '../components/Giscus';
 
 export const Head = ({ data: { markdownRemark: post } }) => {
-  const thumbnailURL = getImage(post.frontmatter.image)?.images?.fallback?.src || '';
-  return (
-    <Seo
-      title={post.frontmatter.title}
-      description={post.frontmatter.description || post.excerpt}
-      thumbnailURL={thumbnailURL}
-    />
-  );
+  return <Seo title={post.frontmatter.title} description={post.frontmatter.description || post.excerpt} />;
 };
 
 const BlogPostTemplate = ({ data: { site, markdownRemark: post }, location }) => {

@@ -9,13 +9,13 @@
  */
 module.exports = {
   siteMetadata: {
-    title: `프론트엔드 개발자 devjojo 블로그`,
-    siteUrl: `https://deluxe-centaur-4a55b0.netlify.app/`,
+    title: `Frontend Developer 승희 개발 블로그`,
+    description: `Frontend Developer blog`,
+    siteUrl: `https://sa02045.github.io/`,
     author: {
-      name: `devjojo`,
-      summary: `Frontend Developer`,
+      name: `seunghee`,
+      summary: `Frontend Developer blog`,
     },
-    description: `devjojo's blog`,
   },
   plugins: [
     'gatsby-plugin-postcss',

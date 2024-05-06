@@ -1,47 +1,38 @@
 import React from 'react';
-import { useStaticQuery, graphql } from 'gatsby';
+import { useSiteMetadata } from '../hooks/use-site-metadata';
 
-export const Seo = ({ description, title, children, thumbnailURL }: any) => {
-  const { site } = useStaticQuery(
-    graphql`
-      query {
-        site {
-          siteMetadata {
-            title
-            description
-            siteUrl
-            social {
-              twitter
-            }
-          }
-        }
-      }
-    `
-  );
+interface Props {
+  description: string;
+  title: string;
+  children: React.ReactNode;
+}
 
-  const defaultTitle = site.siteMetadata?.title;
-  const metaDescription = description || site.siteMetadata.description;
-  const siteUrl = site.siteMetadata?.siteUrl || 'https://deluxe-centaur-4a55b0.netlify.app/';
-  const defaultThumbnailURL = thumbnailURL || '/images/og-image.png';
+export const Seo = ({ description, title, children }: Props) => {
+  const metadata = useSiteMetadata();
+
+  const seo = {
+    title: title || metadata.title,
+    description: description || metadata.description,
+  };
 
   return (
     <>
-      <html lang="ko" />
-      <title>{title || defaultTitle}</title>
-      <meta name="description" content={metaDescription} />
-      <meta property="og:type" content="website" />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={metaDescription} />
+      <title>{seo.title}</title>
+      <meta property="og:title" content={seo.title} />
+      <meta name="twitter:title" content={title} />
+
+      <meta name="description" content={seo.description} />
+      <meta property="og:description" content={description} />
+      <meta name="twitter:description" content={description} />
+
       <meta property="og:type" content="website" />
       <meta property="og:locale" content="ko_KR" />
 
-      <meta property="og:image" content={siteUrl + defaultThumbnailURL} />
-      <meta name="twitter:image" content={siteUrl + defaultThumbnailURL} />
+      <meta name="author" content={metadata.author.name} />
+      <meta name="keywords" content="프론트엔드 개발" />
 
       <meta name="twitter:card" content="summary" />
-      <meta name="twitter:creator" content={site.siteMetadata?.social?.twitter || ``} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={metaDescription} />
+
       {children}
     </>
   );
