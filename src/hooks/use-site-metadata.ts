@@ -18,7 +18,10 @@ export const useSiteMetadata = () => {
           title
           description
           siteUrl
-          author
+          author {
+            name
+            summary
+          }
         }
       }
     }
