@@ -6,10 +6,9 @@ interface Props {
   date: string;
   title: string;
   to: string;
-  tags?: string[];
 }
 
-export const Post = ({ date, title, description, to, tags }: Props) => {
+export const Post = ({ date, title, description, to }: Props) => {
   return (
     <Link to={to} itemProp="url">
       <article
