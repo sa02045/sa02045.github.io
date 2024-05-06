@@ -2,12 +2,13 @@ import React from 'react';
 import { useSiteMetadata } from '../hooks/use-site-metadata';
 
 interface Props {
-  description: string;
-  title: string;
-  children: React.ReactNode;
+  description?: string;
+  title?: string;
+  children?: React.ReactNode;
+  keywords?: string[];
 }
 
-export const Seo = ({ description, title, children }: Props) => {
+export const Seo = ({ description, title, children, keywords }: Props) => {
   const metadata = useSiteMetadata();
 
   const seo = {
