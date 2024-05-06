@@ -18,8 +18,8 @@ type Props = {
   };
 };
 
-export const Head = ({ data: { markdownRemark: post } }: Props) => {
-  return <Seo title={post.frontmatter.title} description={post.frontmatter.description} />;
+export const Head = ({ data: { markdownRemark } }: Props) => {
+  return <Seo title={markdownRemark.frontmatter.title} description={markdownRemark.frontmatter.description} />;
 };
 
 const BlogPostTemplate = ({ data: { markdownRemark } }: Props) => {
