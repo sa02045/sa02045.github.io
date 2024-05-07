@@ -2,6 +2,7 @@
 title: '가상 DOM에 대한 오해와 진실'
 date: '2024-02-04'
 description: '가상 DOM 알아보기'
+tags: ['react']
 ---
 
 ## 가상 DOM에 대한 오해
