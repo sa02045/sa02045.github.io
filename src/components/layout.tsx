@@ -6,11 +6,10 @@ import { defineCustomElements as deckDeckGoHighlightElement } from '@deckdeckgo/
 deckDeckGoHighlightElement();
 
 interface Props {
-  location?: Location;
   children: React.ReactNode;
 }
 
-const Layout = ({ location, children }: Props) => {
+const Layout = ({ children }: Props) => {
   return (
     <div>
       <Header />

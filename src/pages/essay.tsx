@@ -5,10 +5,10 @@ import Layout from '../components/layout';
 import { Seo } from '../components/Seo';
 import { EssayList } from '../components/EssayList';
 
-const Essay = ({ data, location }: { data: any; location: any }) => {
+const Essay = ({ data }: { data: any }) => {
   const posts = data.allMarkdownRemark.nodes;
   return (
-    <Layout location={location}>
+    <Layout>
       <section className="post-list-wrapper">
         <EssayList posts={posts} />
       </section>

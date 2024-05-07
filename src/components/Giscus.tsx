@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-export default function Giscus() {
+export function Giscus() {
   const commentsEl = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

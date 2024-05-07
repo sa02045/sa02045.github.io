@@ -3,7 +3,7 @@ import { graphql } from 'gatsby';
 
 import Layout from '../components/layout';
 import { Seo } from '../components/Seo';
-import Giscus from '../components/Giscus';
+import { Giscus } from '../components/Giscus';
 
 type Props = {
   data: {

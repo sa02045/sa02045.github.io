@@ -9,11 +9,11 @@ interface Props {
   to: string;
 }
 
-const Post = ({ date, title, description, to }: Props) => {
+function Post({ date, title, description, to }: Props) {
   return (
     <Link to={to} itemProp="url">
       <article
-        className="group pb-10 flex hover:translate-y-3 transition mb-10 p-5 rounded-lg hover:shadow-lg"
+        className="group pb-10 flex hover:translate-y-3 transition mb-10"
         itemScope
         itemType="http://schema.org/Article"
       >
@@ -25,9 +25,9 @@ const Post = ({ date, title, description, to }: Props) => {
       </article>
     </Link>
   );
-};
+}
 
-export const PostList = ({ posts }: { posts: PostType[] }) => {
+export function PostList({ posts }: { posts: PostType[] }) {
   return (
     <>
       {posts.map(post => {
@@ -39,4 +39,4 @@ export const PostList = ({ posts }: { posts: PostType[] }) => {
       })}
     </>
   );
-};
+}

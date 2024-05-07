@@ -1,7 +1,7 @@
 import { Link } from 'gatsby';
 import React from 'react';
 
-function Header() {
+export default function Header() {
   return (
     <header className="px-6 py-4 border-b">
       <div className="flex justify-between max-w-screen-md mx-auto">
@@ -23,5 +23,3 @@ function Header() {
     </header>
   );
 }
-
-export default Header;
