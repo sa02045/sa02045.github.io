@@ -5,7 +5,7 @@ interface Props {
   description?: string;
   title?: string;
   children?: React.ReactNode;
-  keywords: string[];
+  keywords?: string[];
   publishedTime?: string;
   thumbnail?: string;
 }
@@ -17,7 +17,7 @@ export const Seo = ({ description, title, children, publishedTime, keywords, thu
     title: title || metadata.title,
     description: description || metadata.description,
     publishedTime: publishedTime ? new Date(publishedTime).toISOString() : '',
-    keywords: keywords || [],
+    keywords: keywords || ['FE', 'Frontend', 'React', 'TypeScript', 'JavaScript', 'UX'],
     thumbnail: thumbnail || '',
   };
 
