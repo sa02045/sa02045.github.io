@@ -29,21 +29,31 @@ export const Seo = ({ description, title, children, publishedTime, keywords, thu
 
       <meta name="article:published_time" content={publishedTime} />
 
-      <meta property="og:site_name" content="FE 개발자 승희 블로그" />
-
       <meta name="description" content={seo.description} />
-      <meta property="og:description" content={seo.description} />
       <meta name="twitter:description" content={seo.description} />
-
-      <meta property="og:type" content="website" />
-      <meta property="og:locale" content="ko_KR" />
 
       <meta name="author" content={metadata.author.name} />
       <meta name="keywords" content={seo.keywords.join(', ')} />
 
+      <meta property="og:site_name" content="FE 개발자 승희 블로그" />
+      <meta property="og:description" content={seo.description} />
+      <meta property="og:type" content="article" />
+      <meta property="og:locale" content="ko_KR" />
       <meta property="og:image" content={seo.thumbnail} />
+      <meta property="og:image:url" content={seo.thumbnail} />
+      <meta property="og:image:secure_url" content={seo.thumbnail} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1280" />
+      <meta property="og:image:height" content="720" />
 
-      <meta name="twitter:card" content="summary" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={seo.title} />
+      <meta name="twitter:description" content={seo.description} />
+      <meta name="twitter:image" content={seo.thumbnail} />
+      <meta name="twitter:label1" content="키워드" />
+      <meta name="twitter:data1" content={seo.keywords.join(', ')} />
+
+      <meta property="article:published_time" content={seo.publishedTime} />
 
       {children}
     </>
