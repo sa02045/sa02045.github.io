@@ -6,6 +6,7 @@ export interface Post {
     description: string;
     date: string;
     tags: Tag[];
+    thumbnail: string;
   };
   fields: {
     slug: string;
