@@ -4,7 +4,7 @@ date: '2024-04-26'
 description: 'inputmode 속성을 사용한 올바른 가상 키보드'
 tags: ['ux']
 keywords: ['ux', 'frontend', 'inputmode', input tag']
-thumbnail: https://github.com/sa02045/blog/assets/50866506/3d26c9c0-35cf-4820-a7b1-0626336f9e63
+thumbnail: https://github.com/sa02045/blog/assets/50866506/d8b88afe-bc59-4984-a380-aad21f7d6abf
 ---
 
 사소한 디테일이 쌓여 좋은 사용자 경험을 만듭니다.
