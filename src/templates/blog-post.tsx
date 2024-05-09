@@ -12,6 +12,7 @@ type Props = {
         title: string;
         description: string;
         date: string;
+        keywords: string[];
       };
       html: string;
     };
@@ -19,7 +20,13 @@ type Props = {
 };
 
 export const Head = ({ data: { markdownRemark } }: Props) => {
-  return <Seo title={markdownRemark.frontmatter.title} description={markdownRemark.frontmatter.description} />;
+  return (
+    <Seo
+      title={markdownRemark.frontmatter.title}
+      description={markdownRemark.frontmatter.description}
+      keywords={markdownRemark.frontmatter.keywords}
+    />
+  );
 };
 
 const BlogPostTemplate = ({ data: { markdownRemark } }: Props) => {
@@ -57,6 +64,7 @@ export const pageQuery = graphql`
         title
         date(formatString: "MMMM DD, YYYY")
         description
+        keywords
       }
     }
   }

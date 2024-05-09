@@ -5,17 +5,18 @@ interface Props {
   description?: string;
   title?: string;
   children?: React.ReactNode;
-  keywords?: string[];
+  keywords: string[];
   publishedTime?: string;
 }
 
-export const Seo = ({ description, title, children, publishedTime }: Props) => {
+export const Seo = ({ description, title, children, publishedTime, keywords }: Props) => {
   const metadata = useSiteMetadata();
 
   const seo = {
     title: title || metadata.title,
     description: description || metadata.description,
     publishedTime: publishedTime ? new Date(publishedTime).toISOString() : '',
+    keywords: keywords || [],
   };
 
   return (
@@ -36,7 +37,7 @@ export const Seo = ({ description, title, children, publishedTime }: Props) => {
       <meta property="og:locale" content="ko_KR" />
 
       <meta name="author" content={metadata.author.name} />
-      <meta name="keywords" content="프론트엔드 개발" />
+      <meta name="keywords" content={seo.keywords.join(', ')} />
 
       <meta name="twitter:card" content="summary" />
 

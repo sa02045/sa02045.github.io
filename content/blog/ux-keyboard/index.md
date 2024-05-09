@@ -1,8 +1,9 @@
 ---
 title: 'UX 디테일 - 상황에 맞는 올바른 가상 키보드 보여주기'
 date: '2024-04-26'
-description: '사용자 경험을 향상하기 위해 올바른 가상 키보드를 보여주는 방법을 소개합니다.'
+description: 'inputmode 속성을 사용한 올바른 가상 키보드'
 tags: ['ux']
+keywords: ['ux', 'frontend', 'inputmode', input tag']
 ---
 
 사소한 디테일이 쌓여 좋은 사용자 경험을 만듭니다.
@@ -15,7 +16,7 @@ tags: ['ux']
 
 예를 들면 **금액을 입력해야 하는데 실제로는 한글 키보드**가 나타나는 경우입니다.
 
-<img src="https://github.com/sa02045/blog/assets/50866506/9dcdd0bf-cd80-46cf-823f-5339b5989dfe" width="300" alt="inputmode example"/>
+<img src="https://github.com/sa02045/blog/assets/50866506/9dcdd0bf-cd80-46cf-823f-5339b5989dfe" width="300" alt="wrong keyboard example"/>
 
 이런 문제가 발생하면 사용자는 불필요한 터치를 한 번 더하고 키보드 전환을 해야 하는 번거로운 경험을 하게 됩니다.
 
@@ -61,7 +62,7 @@ inputmode 속성이 가질 수 있는 값은 총 8가지입니다. ([HTML Spec](
 <input inputmode="search" />
 ```
 
-<img src="https://github.com/sa02045/blog/assets/50866506/29079afe-68ed-4848-9727-4de4fbe08c90" width="300"/>
+<img src="https://github.com/sa02045/blog/assets/50866506/29079afe-68ed-4848-9727-4de4fbe08c90" width="300" alt="search keyboard"/>
 
 기본 키보드와 차이점은 **검색을 위한 버튼**이 추가된 것입니다.
 
@@ -73,7 +74,7 @@ iOS에서는 기존 버튼이 사라지고 검색을 위한 버튼인 `이동` �
 <input inputmode="email" />
 ```
 
-<img src="https://github.com/sa02045/blog/assets/50866506/fe25fa69-c86b-493e-86ba-46ab9afc9c43" width="200" alt="email"/>
+<img src="https://github.com/sa02045/blog/assets/50866506/fe25fa69-c86b-493e-86ba-46ab9afc9c43" width="200" alt="email keyboard"/>
 
 회원가입 등에서 자주 사용되는 이메일 입력입니다. 이메일을 입력할 수 있는 키보드를 보여줍니다. `@` 버튼 등이 추가되어 더욱 편리하게 이메일을 입력할 수 있습니다.
 
@@ -83,7 +84,7 @@ iOS에서는 기존 버튼이 사라지고 검색을 위한 버튼인 `이동` �
 <input inputmode="numeric" type="text" />
 ```
 
-<img src="https://github.com/sa02045/blog/assets/50866506/8e7eec31-92c8-43ff-9664-6a7af4282743" width="300" alt="numeric"/>
+<img src="https://github.com/sa02045/blog/assets/50866506/8e7eec31-92c8-43ff-9664-6a7af4282743" width="300" alt="numeric keyboard"/>
 
 숫자 입력을 받을 때 input 태그의 type="number"로 잘못 설정하는 경우가 많습니다. 하지만 특정 케이스를 제외하면 숫자 입력이라고 해도 `type="text"`로 설정하는 것이 좋습니다.
 
