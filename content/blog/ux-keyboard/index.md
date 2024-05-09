@@ -1,7 +1,7 @@
 ---
 title: 'UX 디테일 - 상황에 맞는 올바른 가상 키보드 보여주기'
 date: '2024-04-26'
-description: 'inputmode 속성 사용하기'
+description: '사용자 경험을 향상하기 위해 올바른 가상 키보드를 보여주는 방법을 소개합니다.'
 tags: ['ux']
 ---
 
