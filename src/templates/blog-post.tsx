@@ -13,6 +13,7 @@ type Props = {
         description: string;
         date: string;
         keywords: string[];
+        thumbnail: string;
       };
       html: string;
     };
@@ -25,6 +26,7 @@ export const Head = ({ data: { markdownRemark } }: Props) => {
       title={markdownRemark.frontmatter.title}
       description={markdownRemark.frontmatter.description}
       keywords={markdownRemark.frontmatter.keywords}
+      thumbnail={markdownRemark.frontmatter.thumbnail}
     />
   );
 };
@@ -65,6 +67,7 @@ export const pageQuery = graphql`
         date(formatString: "MMMM DD, YYYY")
         description
         keywords
+        thumbnail
       }
     }
   }

@@ -7,9 +7,10 @@ interface Props {
   children?: React.ReactNode;
   keywords: string[];
   publishedTime?: string;
+  thumbnail?: string;
 }
 
-export const Seo = ({ description, title, children, publishedTime, keywords }: Props) => {
+export const Seo = ({ description, title, children, publishedTime, keywords, thumbnail }: Props) => {
   const metadata = useSiteMetadata();
 
   const seo = {
@@ -17,6 +18,7 @@ export const Seo = ({ description, title, children, publishedTime, keywords }: P
     description: description || metadata.description,
     publishedTime: publishedTime ? new Date(publishedTime).toISOString() : '',
     keywords: keywords || [],
+    thumbnail: thumbnail || '',
   };
 
   return (
@@ -38,6 +40,8 @@ export const Seo = ({ description, title, children, publishedTime, keywords }: P
 
       <meta name="author" content={metadata.author.name} />
       <meta name="keywords" content={seo.keywords.join(', ')} />
+
+      <meta property="og:image" content={seo.thumbnail} />
 
       <meta name="twitter:card" content="summary" />
 
