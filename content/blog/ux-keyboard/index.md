@@ -75,7 +75,7 @@ iOS에서는 기존 버튼이 사라지고 검색을 위한 버튼인 `이동` �
 <input inputmode="email" />
 ```
 
-<img src="https://github.com/sa02045/blog/assets/50866506/fe25fa69-c86b-493e-86ba-46ab9afc9c43" width="200" alt="email keyboard"/>
+<img src="https://github.com/sa02045/blog/assets/50866506/fe25fa69-c86b-493e-86ba-46ab9afc9c43" width="300" alt="email keyboard"/>
 
 회원가입 등에서 자주 사용되는 이메일 입력입니다. 이메일을 입력할 수 있는 키보드를 보여줍니다. `@` 버튼 등이 추가되어 더욱 편리하게 이메일을 입력할 수 있습니다.
 
