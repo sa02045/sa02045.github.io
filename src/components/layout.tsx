@@ -13,7 +13,7 @@ const Layout = ({ children }: Props) => {
   return (
     <div>
       <Header />
-      <main className="py-12 pb-20 px-6 flex overflow-y-scroll mx-auto max-w-screen-md sm:max-w-screen-md">
+      <main className="py-12 pb-20 px-6 flex overflow-y-scroll mx-auto max-w-screen-md sm:max-w-screen-lg">
         {children}
       </main>
       <Footer />
