@@ -15,8 +15,9 @@ export default function Header() {
           <Link to="/">
             <li className="text-stone-950 text-xl mr-5">기술 글</li>
           </Link>
-          {/* <Link to="/essay">
-            <li className="text-stone-950 text-xl">짧은 글</li>
+
+          {/* <Link to="/about">
+            <li className="text-stone-950 text-xl mr-5">about</li>
           </Link> */}
         </ul>
       </div>
