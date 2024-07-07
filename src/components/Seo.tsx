@@ -35,7 +35,7 @@ export const Seo = ({ description, title, children, publishedTime, keywords, thu
       <meta name="author" content={metadata.author.name} />
       <meta name="keywords" content={seo.keywords.join(', ')} />
 
-      <meta property="og:site_name" content="FE 개발자 승희 블로그" />
+      <meta property="og:site_name" content="FE 개발자 seunghee 블로그" />
       <meta property="og:description" content={seo.description} />
       <meta property="og:type" content="article" />
       <meta property="og:locale" content="ko_KR" />

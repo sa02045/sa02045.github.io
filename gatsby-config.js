@@ -9,7 +9,7 @@
  */
 module.exports = {
   siteMetadata: {
-    title: `Frontend Developer 승희 개발 블로그`,
+    title: `Frontend Developer seunghee 개발 블로그`,
     description: `Frontend Developer blog`,
     siteUrl: `https://sa02045.github.io/`,
     author: {
