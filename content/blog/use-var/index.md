@@ -6,7 +6,9 @@ description: 'var, let, const의 성능차이'
 
 ## const에서 var로 돌아가기
 
-TypeScript 프로젝트를 구경하다가 흥미있는 이슈를 보았다. 성능을 위해 일부 코드를 **const에서 var로 변경한다**는 내용이었다. ([#52924](https://github.com/microsoft/TypeScript/issues/52924))
+TypeScript 프로젝트를 구경하다가 흥미있는 이슈를 보았다. 성능을 위해 일부 코드를 **const에서 var로 변경한다**는 내용이었다.
+
+- PR ([#52924](https://github.com/microsoft/TypeScript/issues/52924))
 
 <img src="./javascript4.png"  />
 
@@ -14,14 +16,14 @@ PR을 이해하기 위한 맥락과 PR의 내용을 정리하면 다음과 같�
 
 - TypeScript는 Self-hosting 언어로, TypeScript 컴파일러는 TypeScript로 작성되어 있다.
 - TypeScript 5.0부터 ESM 지원을 위해 TypeScript 컴파일러의 target을 **ES5에서 ES2018**로 전환했다.
-- 그런데 `let`과 `const`를 사용했더니 성능이 느려졌다.
-- 성능을 위해 var로 다시 돌아간다.
+- 그런데 var 대신 let, const를 사용했더니 성능이 느려졌다.
+- 성능을 위해 var로 다시 변경한다.
 
-var 키워드의 성능이 더 빠르다는 것은 처음 들어보는 이야기였다. 궁금증을 위해 조사를 한 내용을 정리해보려고 한다.
+var 키워드의 성능이 더 빠르다는 것은 처음 들어보는 이야기였다. 궁금증을 위해 조사한 내용을 정리해보려고 한다.
 
 ### var 키워드
 
-자바스크립트는 이상하고 재미있는 특징이 많다. 그 중 `var` 키워드는 스코프, 중복 선언 가능, 호이스팅 등 여러 문제점을 가지고 있다. 문제점 중 하나는 "var로 선언한 변수는 선언 전에 사용할 수 있다" 는 것이다. 선언 전에 접근하면 "undefined"를 반환한다.
+자바스크립트는 이상하고 재미있는 특징이 많다. 그 중 `var` 키워드는 스코프, 중복 선언 가능, 호이스팅 등 여러 문제점을 가지고 있다. 문제점 중 하나는 "var로 선언한 변수는 선언 전에 사용할 수 있다" 는 것이다. var로 선언한 변수를 선언 전에 접근하면 "undefined" 값을 가진다.
 
 ```js
 {
@@ -30,11 +32,11 @@ var 키워드의 성능이 더 빠르다는 것은 처음 들어보는 이야기
 }
 ```
 
-다른 프로그래밍 언어라면 에러를 발생시킬 것 같지만 자바스크립트는 에러없이 undefined를 출력한다. 변수 a를 선언하기 전에 a를 참조하고 있음에도 이 코드는 에러없이 정상적으로 동작한다. `var 호이스팅` 때문인데, 자바스크립트를 만든 Brendan Eich에 따르면 이러한 var 호이스팅은 바쁜 작업으로 인한 의도하지 않은 결과라고 한다.
+다른 프로그래밍 언어라면 에러를 발생시킬 것 같지만 자바스크립트는 에러없이 undefined가 할당된다. 변수 a를 선언하기 전에 a를 참조하고 있음에도 이 코드는 에러없이 정상적으로 동작한다. `var 호이스팅` 때문인데, 자바스크립트를 만든 Brendan Eich에 따르면 이러한 var 호이스팅은 바쁜 작업으로 인한 의도하지 않은 결과라고 한다.
 
 <img src="./javascript.png"  />
 
-var 키워드의 문제를 해결하기 위해 ES6에서 let, const 키워드가 등장했다.
+이러한 var 키워드의 문제를 해결하기 위해 ES6에서 let, const 키워드가 등장했다.
 
 ## TDZ(Temporal Dead Zone)
 
@@ -98,11 +100,15 @@ V8 엔진에도 var과 let,const 사이에 10% 정도의 성능 차이가 존재
 
 ### TC39에서도 논의되었다
 
-이러한 TDZ 검사 비용 문제는 ECMAScript 표준을 개발하고 유지 관리하는 그룹인 TC39에서도 [논의](https://github.com/tc39/notes/blob/main/meetings/2023-09/september-27.md#tdz-what-is-it-good-for)되었다. `TDZ는 뭐에 좋은가요?`라는 주제로 let, const에서 TDZ 검사를 제거하자는 아이디어가 논의되었다. 비교적 최근인 2023-09월에 논의되었기 때문에 당장 바뀌지는 않을 것으로 보인다.
+이러한 TDZ 검사 비용 문제는 ECMAScript 표준을 개발하고 유지 관리하는 그룹인 TC39에서도 논의되었다. `TDZ는 뭐에 좋은가요?`라는 주제로 let, const에서 TDZ 검사를 제거하자는 아이디어가 논의되었다. 비교적 최근인 2023-09월에 논의되었기 때문에 당장 바뀌지는 않을 것으로 보인다.
 
-<img width="50%" src="https://github.com/sa02045/blog/assets/50866506/37d3b8b4-702f-456a-8969-14364ec3417b">
+<img width="70%" src="https://github.com/sa02045/blog/assets/50866506/37d3b8b4-702f-456a-8969-14364ec3417b">
+
+자세한 내용은 [TC39 회의록](https://github.com/tc39/notes/blob/main/meetings/2023-09/september-27.md#tdz-what-is-it-good-for)에서 볼 수 있다.
 
 ## var 사용해서 성능 향상하기
+
+### TypeScript
 
 TypeScript가 var로 성능을 향상시킨 예시를 보자. 다음은 TypeScript 컴파일러의 소스코드 중 일부이다.
 
@@ -110,12 +116,9 @@ TypeScript가 var로 성능을 향상시킨 예시를 보자. 다음은 TypeScri
 // src/compiler/parser.ts
 
 // const -> var로 전환
-// const scanner = createScanner(ScriptTarget.Latest, /*skipTrivia*/ true);
 var scanner = createScanner(ScriptTarget.Latest, /*skipTrivia*/ true);
 
 function initializeState() {
-  // .....
-  // .....
   // .....
   // .....
   scanner.setText(sourceText);
@@ -125,13 +128,13 @@ function initializeState() {
 }
 ```
 
-const로 선언된 scanner 변수를 var로 변경한했다. 변수 scanner는 생성 비용이 크기 때문에 매번 새롭게 생성하는 것은 비효율적이다. 그래서 최상위 레벨 스코프에서 한 번만 생성하고 다른 함수들이 공유해서 사용한다.
+const로 선언된 scanner 변수를 var로 변경했다. 변수 scanner는 생성 비용이 크기 때문에 매번 새롭게 생성하는 것은 비효율적이다. 그래서 최상위 레벨 스코프에서 한 번만 생성하고 다른 함수들이 공유해서 사용한다.
 
-자바스크립트 엔진은 런타임에 const로 선언된 scanner 변수에 대해 TDZ 검사를 수행해야한다. parser.ts 파일 하나의 전체 라인은 **10,000줄**이 넘는다. 대규모 코드베이스에 존재하는 변수 scanner를 참조하는 함수가 많다면 해당 함수를 호출하거나 참조할때마다 생기는 TDZ 검사 비용은 커질 수 있다.
+자바스크립트 엔진은 런타임에 const로 선언된 scanner 변수에 대해 TDZ 검사를 수행해야했다. parser.ts 파일 하나의 전체 라인은 **10,000줄**이 넘는다. 대규모 코드베이스에 존재하는 변수 scanner를 참조하는 함수가 많다면 해당 함수를 호출하거나 참조할때마다 생기는 TDZ 검사 비용은 커질 수 있다.
 
 TypeScript 팀은 const로 선언된 scanner를 var로 변경하여 TDZ 검사 비용을 줄였는데 **실제로 var 키워드로 전환하는 것만으로 최대 10~13% 정도의 성능 향상을 가져왔다고 한다.**
 
-- [#52832](https://github.com/microsoft/TypeScript/pull/52832)
+- PR [#52832](https://github.com/microsoft/TypeScript/pull/52832)
 
 ### esbuild
 
@@ -144,3 +147,9 @@ TypeScript 팀은 const로 선언된 scanner를 var로 변경하여 TDZ 검사 �
 그렇다면 프론트엔드 개발자는 성능을 위해 var 사용을 고려해야할까? 대규모 코드베이스에서 var은 let, const 보다 빠르다는 것은 어느정도 사실인 것 같다. 하지만 대부분의 프론트엔드 개발자가 이러한 저수준의 성능 최적화는 신경쓰지도 않고, 신경쓸 필요도 없다는 것이 내 생각이다.
 
 만약 극단적인 성능 최적화를 달성해야한다면 var를 사용하여 TDZ 검사를 회피하고 자바스크립트 엔진의 런타임 비용을 줄이는 것도 하나의 방법이 될 수 있다. **성능과 var이 가진 문제점 사이의 트레이드오프를 고려하여 사용하면 될 것이다.**
+
+인터넷의 글을 보면 "var는 절대 사용하지 마라"는 글이 많다. 또 이와 비슷하게 특정 프로그래밍 언어 또는 라이브러리, 프레임워크에서 무슨무슨 기능은 절대 사용하지 마세요라는 글을 많이 찾아볼 수 있다. `function` 키워드가 그러하고 TypeScript `enum` 키워드가 그러하다.
+
+하지만 deprecated된 기능이 아니고서는 모든 기능은 상황과 목적에 따라 적절하게 사용할 수 있다. TDZ 검사를 하지 않는 var를 성능 최적화를 위해 사용하는 것도 그렇다.
+
+우리 개발자가 가져야할 역량은 무비판적으로 어떤 기능은 사용하지 말아야지라는 편견이 아니라 **상황과 목적에 따라 적절한 기능을 선택하고 판단할 수 있는 능력**이라고 생각한다.
