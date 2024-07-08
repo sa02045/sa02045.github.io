@@ -1,7 +1,7 @@
 ---
 title: 'Timezone 이슈 트러블슈팅 - 지금은 점검시간입니다'
 date: '2024-07-08'
-description: ''
+description: '시간을 다루는 개발자, Timezone을 고려하라'
 tags: ['timezone', 'troubleshooting', '타임존', '트러블슈팅']
 thumbnail: https://t1.daumcdn.net/thumb/R720x0/?fname=http://t1.daumcdn.net/brunch/service/user/4yJe/image/8QAi2OERgLwZSFisJIlXSuQSs7Q.jpg
 ---
