@@ -40,7 +40,7 @@ const BlogPostTemplate = ({ data: { markdownRemark } }: Props) => {
 
   return (
     <Layout>
-      <article className="flex flex-col" itemScope itemType="http://schema.org/Article">
+      <article className="flex flex-col w-full" itemScope itemType="http://schema.org/Article">
         <div className="mb-10">
           <h1 className="text-3xl font-bold">{markdownRemark.frontmatter.title}</h1>
           <p className="text-sm mt-6">{dateText}</p>
