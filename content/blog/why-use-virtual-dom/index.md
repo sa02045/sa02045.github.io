@@ -12,7 +12,7 @@ hide: true
 
 - 브라우저 렌더링 과정을 다룹니다. reflow, repaint 과정은 비싼 비용이기 때문에 최소화해야 합니다.
 - 가상 DOM은 재조정(reconciliation)과정을 통해 실제 DOM에 최소한의 변경만을 반영하여 reflow, repaint 비용을 줄여줍니다.
-- 따라서 가상 DOM을 사용하면 브라우저 렌더링 과정 중 reflow, repaint의 비싼 비용을 줄일 수 있습니다.
+- 따라서 가상 DOM을 사용하면 브라우저 렌더링 과정 중 reflow, repaint의 비싼 비용을 줄일 수 있습k니다.
 
 그리고 다음 결론을 내리고 가상 DOM이라는 기술에 대해 오해하게 됩니다.
 
