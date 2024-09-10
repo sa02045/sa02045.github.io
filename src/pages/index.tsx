@@ -41,6 +41,7 @@ export const pageQuery = graphql`
           description
           tags
           thumbnail
+          hide
         }
       }
     }

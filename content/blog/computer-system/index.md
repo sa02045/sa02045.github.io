@@ -4,6 +4,7 @@ date: '2024-05-13'
 description: 책 컴퓨터 밑바닥의 비밀을 읽고 느낀 점을 리뷰합니다.
 keywords: ['책', '개발 서적', '컴퓨터 밑바닥의 비밀', '리뷰']
 thumbnail: https://github.com/sa02045/sa02045.github.io/assets/50866506/1063bc2a-bb18-4e3c-90ce-da573b0e534d
+hide: true
 ---
 
 <img src="https://github.com/sa02045/sa02045.github.io/assets/50866506/1063bc2a-bb18-4e3c-90ce-da573b0e534d" alt="컴퓨터 밑바닥의 비밀"  width="400"/>

@@ -7,6 +7,7 @@ export interface Post {
     date: string;
     tags: Tag[];
     thumbnail: string;
+    hide: boolean;
   };
   fields: {
     slug: string;

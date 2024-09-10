@@ -39,6 +39,7 @@ export function PostList({ posts }: { posts: PostType[] }) {
     <>
       {posts.map(post => {
         const to = post.fields.slug;
+        if (post.frontmatter.hide) return null;
         return <Post key={post.fields.slug} to={to} frontmatter={post.frontmatter} />;
       })}
     </>

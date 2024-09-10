@@ -113,6 +113,7 @@ exports.createSchemaCustomization = ({ actions }) => {
       title: String
       description: String
       date: Date @dateformat
+      hide: Boolean
     }
 
     type Fields {

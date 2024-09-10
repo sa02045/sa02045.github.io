@@ -3,6 +3,7 @@ title: 'udemy "기술블로그로 알아보는 테크니컬 라이팅" 수강후
 date: '2024-01-07'
 description: 'udemy "기술블로그로 알아보는 테크니컬 라이팅"을 수강하고'
 image: ../../../src/images/udemy-wrtiting.png
+hide: true
 ---
 
 | 해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다
