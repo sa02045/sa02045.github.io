@@ -4,7 +4,7 @@ import type { Post } from '../schema';
 
 import Layout from '../components/layout';
 import { Seo } from '../components/seo';
-import { PostList } from '../components/PostList';
+import { PostList } from '../components/post-list';
 
 const Posts = ({ data }: { data: any }) => {
   const posts = data.allMarkdownRemark.nodes as Post[];
