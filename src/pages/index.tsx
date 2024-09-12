@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { Post } from '../schema';
 
 import Layout from '../components/layout';
-import { Seo } from '../components/Seo';
+import { Seo } from '../components/seo';
 import { PostList } from '../components/PostList';
 
 const Home = ({ data }: { data: any }) => {

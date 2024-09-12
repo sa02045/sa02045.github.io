@@ -2,8 +2,8 @@ import * as React from 'react';
 import { graphql } from 'gatsby';
 
 import Layout from '../components/layout';
-import { Seo } from '../components/Seo';
-import { Giscus } from '../components/Giscus';
+import { Seo } from '../components/seo';
+import { Giscus } from '../components/giscus';
 
 type Props = {
   data: {
