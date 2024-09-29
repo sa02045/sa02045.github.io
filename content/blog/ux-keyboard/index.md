@@ -4,7 +4,7 @@ date: '2024-04-26'
 description: 'inputmode 속성을 사용한 올바른 가상 키보드'
 tags: ['ux']
 keywords: ['ux', 'frontend', 'inputmode', input tag']
-thumbnail: https://github.com/sa02045/blog/assets/50866506/d8b88afe-bc59-4984-a380-aad21f7d6abf
+thumbnail: https://github.com/user-attachments/assets/a166d1c6-0393-49b2-a0e1-5fc27c9415f9
 hide: true
 ---
 
@@ -18,7 +18,7 @@ hide: true
 
 예를 들면 **금액을 입력해야 하는데 실제로는 한글 키보드**가 나타나는 경우입니다.
 
-<img src="https://github.com/sa02045/blog/assets/50866506/9dcdd0bf-cd80-46cf-823f-5339b5989dfe" width="300" alt="wrong keyboard example"/>
+<img src="https://github.com/user-attachments/assets/a166d1c6-0393-49b2-a0e1-5fc27c9415f9" width="300" alt="wrong keyboard example"/>
 
 이런 문제가 발생하면 사용자는 불필요한 터치를 한 번 더하고 키보드 전환을 해야 하는 번거로운 경험을 하게 됩니다.
 
