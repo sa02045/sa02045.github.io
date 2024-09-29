@@ -1,5 +1,5 @@
 ---
-title: 'Timezone 이슈 트러블슈팅 - 지금은 점검시간입니다'
+title: 'Timezone 이슈 트러블슈팅'
 date: '2024-07-08'
 description: '시간을 다루는 개발자, Timezone을 고려하라'
 tags: ['timezone', 'troubleshooting', '타임존', '트러블슈팅']
