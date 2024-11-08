@@ -5,7 +5,7 @@ description: 'AWS S3에 파일을 업로드할 때 피해야하는 파일 이름
 ---
 - 2022년 5월 29일에 velog 직접 작성한 글을 옮겨왔습니다.
 
-# 배경
+## 배경
 
 프론트 분리 작업이 진행 중인 회사에 입사하자마자 프론트 배포 작업을 맡게 되었습니다. 이미 회사에서는 AWS를 사용하고 있었기 때문에 별다른 선택없이 ~~AWS S3 + Cloudflare를 사용해 배포를 하기로 했습니다~~. (지금은 Amplify로 바꾸었습니다!) 다행히 규모가 그리 크지 않은 웹 어플리케이션이라서 별 문제없이 무사히 진행되는 듯 보였습니다. 
 
@@ -15,14 +15,16 @@ description: 'AWS S3에 파일을 업로드할 때 피해야하는 파일 이름
 
 _**바로 파일 이름에 `+` 기호가 있다는 공통점이었습니다**_
 
-![깨진 이미지](https://velog.velcdn.com/images/sa02045/post/2ce03d42-3f95-46da-85fd-87bd56073866/image.png)![이미지 파일 이름](https://velog.velcdn.com/images/sa02045/post/cb262610-f6c3-4375-bad7-c36f52311d42/image.png)
+![깨진 이미지](https://velog.velcdn.com/images/sa02045/post/2ce03d42-3f95-46da-85fd-87bd56073866/image.png)!
+
+[이미지 파일 이름](https://velog.velcdn.com/images/sa02045/post/cb262610-f6c3-4375-bad7-c36f52311d42/image.png)
 
 
 
 로컬 개발환경에서는 이미지가 깨지지않고 잘 렌더링되었기 때문에 원인 AWS S3에 있을 것이라고 생각이 들어 S3에 대해 조사를 시작했습니다. 
 
 
-# AWS S3 구조
+## AWS S3 구조
 
 간단하게 S3 객체에 대해 알아보았습니다.
 
@@ -84,16 +86,16 @@ S3 객체에 대해 가볍게 이해했으니, 다시 문제의 원인을 알아
 
 위와 같은 문자를 제한하는 이유를 AWS는 DNS, 프로토콜, 파싱과정에서 문제가 생길 수 있다고 설명하고 있습니다.
 
-# 해결
+## 해결
 
 위와 같은 원인을 알고 난 후 해결방법은 쉬웠습니다.  기존 `+` 기호를 가지고 있는 이미지 파일들을 모두 `plus` 라는 문자로 바꾸니 배포 사이트에서 잘 렌더링이 되었습니다. 
 
-# 세줄 정리
+## 세줄 정리
 
 - 일을 하다보면 생각보다 사소한 원인이 발목을 잡을 때가 많다
 - S3를 사용할 때는 객체 명명 규칙에 맞게 파일 이름을 잘 짓자
 - 파일이름을 지을때는 최대한 `기호` 를 피하고 영어를 사용하자
 
-# 참고
+## 참고
 
 1. [https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/object-keys.html](https://docs.aws.amazon.com/ko_kr/AmazonS3/latest/userguide/object-keys.html)
