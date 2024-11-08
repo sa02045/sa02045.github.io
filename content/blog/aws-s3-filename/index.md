@@ -15,9 +15,9 @@ description: 'AWS S3에 파일을 업로드할 때 피해야하는 파일 이름
 
 _**바로 파일 이름에 `+` 기호가 있다는 공통점이었습니다**_
 
-![깨진 이미지](https://velog.velcdn.com/images/sa02045/post/2ce03d42-3f95-46da-85fd-87bd56073866/image.png)!
+![깨진 이미지](https://velog.velcdn.com/images/sa02045/post/2ce03d42-3f95-46da-85fd-87bd56073866/image.png)
 
-[이미지 파일 이름](https://velog.velcdn.com/images/sa02045/post/cb262610-f6c3-4375-bad7-c36f52311d42/image.png)
+![이미지 파일 이름](https://velog.velcdn.com/images/sa02045/post/cb262610-f6c3-4375-bad7-c36f52311d42/image.png)
 
 
 
