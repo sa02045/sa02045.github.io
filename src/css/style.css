@@ -96,6 +96,7 @@ body {
     sans-serif;
   color: var(--color-text);
   font-size: 17px;
+  background-color: #d1dce5;
 }
 
 footer {

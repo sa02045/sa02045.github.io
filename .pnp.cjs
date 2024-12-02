@@ -61,6 +61,7 @@ const RAW_RUNTIME_STATE =
           ["prismjs", "npm:1.29.0"],\
           ["react", "npm:18.3.1"],\
           ["react-dom", "virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:18.3.1"],\
+          ["react-snowfall", "virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:2.2.0"],\
           ["react-toggle-dark-mode", "virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:1.1.1"],\
           ["sass", "npm:1.78.0"],\
           ["tailwindcss", "npm:3.4.11"],\
@@ -12402,6 +12403,7 @@ const RAW_RUNTIME_STATE =
           ["prismjs", "npm:1.29.0"],\
           ["react", "npm:18.3.1"],\
           ["react-dom", "virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:18.3.1"],\
+          ["react-snowfall", "virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:2.2.0"],\
           ["react-toggle-dark-mode", "virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:1.1.1"],\
           ["sass", "npm:1.78.0"],\
           ["tailwindcss", "npm:3.4.11"],\
@@ -18281,6 +18283,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["react-fast-compare", [\
+      ["npm:3.2.2", {\
+        "packageLocation": "../../../../.yarn/berry/cache/react-fast-compare-npm-3.2.2-45b585a872-10c0.zip/node_modules/react-fast-compare/",\
+        "packageDependencies": [\
+          ["react-fast-compare", "npm:3.2.2"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["react-is", [\
       ["npm:16.13.1", {\
         "packageLocation": "../../../../.yarn/berry/cache/react-is-npm-16.13.1-a9b9382b4f-10c0.zip/node_modules/react-is/",\
@@ -18324,6 +18335,33 @@ const RAW_RUNTIME_STATE =
           "@types/webpack",\
           "react",\
           "webpack"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react-snowfall", [\
+      ["npm:2.2.0", {\
+        "packageLocation": "../../../../.yarn/berry/cache/react-snowfall-npm-2.2.0-a81957d5c6-10c0.zip/node_modules/react-snowfall/",\
+        "packageDependencies": [\
+          ["react-snowfall", "npm:2.2.0"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:2.2.0", {\
+        "packageLocation": "./.yarn/__virtual__/react-snowfall-virtual-67299e9212/5/.yarn/berry/cache/react-snowfall-npm-2.2.0-a81957d5c6-10c0.zip/node_modules/react-snowfall/",\
+        "packageDependencies": [\
+          ["react-snowfall", "virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:2.2.0"],\
+          ["@types/react", "npm:18.3.5"],\
+          ["@types/react-dom", "npm:18.3.0"],\
+          ["react", "npm:18.3.1"],\
+          ["react-dom", "virtual:e3e6c79b4e4b15bb646c1869dd45f892ed00dfa42c1ea5c0e349b850e62661e67bcc3b04e80311c5adb511b4f343fdef295a6361c1cc3f27eccbe809a90411bc#npm:18.3.1"],\
+          ["react-fast-compare", "npm:3.2.2"]\
+        ],\
+        "packagePeers": [\
+          "@types/react-dom",\
+          "@types/react",\
+          "react-dom",\
+          "react"\
         ],\
         "linkType": "HARD"\
       }]\

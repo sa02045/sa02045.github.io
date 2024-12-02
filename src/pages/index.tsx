@@ -1,6 +1,7 @@
 import { graphql } from 'gatsby';
 import * as React from 'react';
 import type { Post } from '../schema';
+import Snowfall from 'react-snowfall';
 
 import Layout from '../components/layout';
 import { Seo } from '../components/seo';
@@ -11,6 +12,20 @@ const Home = ({ data }: { data: any }) => {
 
   return (
     <Layout>
+      <div
+        style={{
+          height: '100vh',
+          width: '100vw',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          zIndex: 1000,
+          pointerEvents: 'none',
+        }}
+      >
+        <Snowfall color="#fff" />
+      </div>
+      ,
       <section>
         <PostList posts={posts} />
       </section>

@@ -8445,6 +8445,7 @@ __metadata:
     prismjs: "npm:^1.29.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
+    react-snowfall: "npm:^2.2.0"
     react-toggle-dark-mode: "npm:^1.1.1"
     sass: "npm:^1.77.8"
     tailwindcss: "npm:^3.4.3"
@@ -13430,6 +13431,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-fast-compare@npm:^3.2.2":
+  version: 3.2.2
+  resolution: "react-fast-compare@npm:3.2.2"
+  checksum: 10c0/0bbd2f3eb41ab2ff7380daaa55105db698d965c396df73e6874831dbafec8c4b5b08ba36ff09df01526caa3c61595247e3269558c284e37646241cba2b90a367
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -13455,6 +13463,18 @@ __metadata:
     react: 0.0.0-experimental-c8b778b7f-20220825
     webpack: ^5.59.0
   checksum: 10c0/7b59cdaba01a13060fef682a06d562bfd0febe6452643098ef52d49032d95d2e5149fb504917cc286b573b8795fc8bcefbfe896f122ec5ed741d280d43774f8a
+  languageName: node
+  linkType: hard
+
+"react-snowfall@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "react-snowfall@npm:2.2.0"
+  dependencies:
+    react-fast-compare: "npm:^3.2.2"
+  peerDependencies:
+    react: ^16.8 || 17.x || 18.x
+    react-dom: ^16.8 || 17.x || 18.x
+  checksum: 10c0/278fb6fd6f9e79fd747c243761ea546a1e441d73a2ba1b78e2977de53161fccf675665f0f4eb0417e352e493da13ee440a6dc671ab61a7e72de68354245e06c0
   languageName: node
   linkType: hard
 
