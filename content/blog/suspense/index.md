@@ -16,7 +16,7 @@ React 18부터 본격적으로 지원되는 Suspense는 컴포넌트가 아직 �
 </Suspense>
 ```
 
-여기서 MyComponent가 데이터를 가져오거나, 동적 임포트를 로딩하는 과정에서 ‘로딩 중’임을 알리려면 내부적으로 Promise를 throw해야 합니다. 그래야만 Suspense가 이를 감지하고 fallback으로 정의된 Skeleton, Spinner, Loader 등을 보여줄 수 있습니다.
+여기서 MyComponent가 데이터를 가져오거나, 동적 임포트를 로딩하는 과정에서 ‘로딩 중’임을 알리려면 내부적으로 Promise를 throw해야 한다. 그래야만 Suspense가 이를 감지하고 fallback으로 정의된 Skeleton, Spinner, Loader 등을 보여줄 수 있다.
 
 중요한 점은 단순히 비동기 요청을 한다고 해서 자동으로 Suspense가 fallback UI를 보여주는 것은 아니라는 점이다. React Query(TanStack Query) 같은 라이브러리에서 제공하는 useSuspenseQuery처럼, Promise throw를 내부적으로 해주는 방법을 사용해야 Suspense fallback이 활성화된다.
 
@@ -61,13 +61,13 @@ useSuspenseQuery({
 단점
 
 - 팝콘 UI 문제: 데이터 로딩 완료 시점이 제각각이므로,마치 팝콘이 튀어나오듯이 컴포넌트가 하나씩 ‘뻥뻥’ 튀어나오는 느낌을 줄 수 있다. 사용자가 “화면이 덜그덕거린다”고 인식할 수도 있다.
-- UI 복잡도 증가: 여러 곳에서 Skeleton이나 Spinner가 동시에 나타날 수 있어, 로딩 화면도 여러 형태로 중첩될 위험이 있.
+- UI 복잡도 증가: 여러 곳에서 Skeleton이나 Spinner가 동시에 나타날 수 있어, 로딩 화면도 여러 형태로 중첩될 위험이 있다.
 
 <img src="https://github.com/user-attachments/assets/08e0cbe3-1c68-48e4-864d-c93c981a493d" width="300"/>
 
 ## 전체 Suspense
 
-“전체 Suspense”는, 페이지 수준에서 한 번에 Suspense를 적용하는 방식이다. 즉, 아래처럼 페이지 상단에 <Suspense fallback={<Skeleton />}>를 배치하고, 그 안에 여러 개의 섹션 또는 컴포넌트를 동시에 감싸는 방법이다.
+“전체 Suspense”는, 페이지 수준에서 한 번에 Suspense를 적용하는 방식이다.
 
 ```tsx
 // Page Component
