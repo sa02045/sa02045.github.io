@@ -2,7 +2,7 @@
 title: '부분 Suspense vs 전체 Suspense'
 date: '2024-12-22'
 description: 'Suspense 좀 더 고민해보기'
-tags: ['react', 'suspense', 'ux]
+tags: ['react', 'suspense', 'ux']
 keywords: ['react', 'suspense']
 ---
 
