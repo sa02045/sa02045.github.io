@@ -1,0 +1,304 @@
+---
+title: '이진탐색 트리 정리 및 구현하기'
+date: '2024-12-22'
+summary: '이진탐색 트리 BST'
+tags: ['algorithm']
+---
+
+## 이진탐색트리
+
+이진탐색트리는 다음과 같은 속성을 가지는 트리를 말한다.
+
+모든 노드 N에 대해
+
+1. N의 왼쪽 하위 트리의 속한 모든 노드의 값은 N의 값보다 작다.
+2. N의 오른쪽 하위 트리의 속한 모든 노드의 값은 N의 값보다 크다.
+
+<img
+  src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Binary_search_tree.svg/440px-Binary_search_tree.svg.png"
+  width="500"
+/>
+
+### 이진탐색트리, 왜 사용할까?
+
+배열에 비해 어떤 장점이 있길래 이진탐색트리를 사용할까? 정렬된 데이터를 다룰 때 배열과 달리, 이진탐색트리는 데이터의 추가, 삭제, 탐색이 효율적이다.
+이진탐색트리를 사용하면 동적으로 메모리를 할당하고, 데이터를 다루면서도 데이터의 정렬 상태를 유지할 수 있다. 유연성이 뛰어난 장점이 있다.
+
+따라서 데이터의 추가, 삭제가 빈번하면서 **데이터의 정렬 상태를 유지해야하는 경우** 배열 대신 이진탐색트리를 사용하는 것이 좋다.
+
+위 상황의 반대 경우가 배열을 사용해야할 경우이다. 데이터의 추가, 삭제하는 빈도가 적고 정적이며 거의 변화가 없을 때 배열을 사용하는 것이 좋다.
+
+### 노드(Node)
+
+이진 탐색 트리의 가장 맨 위에 있는 노드를 루트(Root)라고 부른다. 루트는 이진 탐색 트리의 모든 연산의 시작점이다.
+
+노드는 값과 최대 두 개의 포인터를 가진다. 포인터는 각각 자식 노드를 가리킨다. 이진탐색트리에서 노드는 최대 두 개의 자식 노드를 가진다.
+어떤 자식 노드도 가지지 않는 노드를 말단(leaf) 노드라고 부른다.
+
+```ts
+class Node {
+  value: number
+  left: Node | null
+  right: Node | null
+
+  constructor(value: number) {
+    this.value = value
+    this.left = null
+    this.right = null
+  }
+}
+```
+
+노드는 위의 데이터 이외에도 필요에 따라 다른 정보를 포함할 수 있다. 자신의 부모 노드를 가리키는 포인터를 추가할 수도 있다.
+
+```ts
+class Node {
+  value: number
+  left: Node | null
+  right: Node | null
+
+  constructor(value: number) {
+    this.value = value
+    this.left = null
+    this.right = null
+  }
+}
+```
+
+## 이진 탐색트리 - 탐색
+
+이진탐색트리에서 특정 값을 탐색하는 방법을 두가지 방법을 알아보자
+
+### 재귀적으로 탐색하기
+
+이진탐색트리를 재귀적으로 탐색하려면 다음 조건을 만족해야한다.
+
+1. 만약 현재 노드가 null이라면 탐색을 종료한다. 마지막 노드까지 탐색했는데 찾고자 하는 값이 없다는 뜻이다.
+2. 만약 현재 노드의 값이 찾고자 하는 특정 값과 같다면 탐색을 종료한다.
+3. 만약 현재 노드의 값이 찾고자 하는 특정 값보다 작고 && 왼쪽 자식 노드가 존재한다면 왼쪽 하위 트리를 재귀적으로 탐색한다.
+4. 만약 현재 노드의 값이 찾고자 하는 특정 값보다 크고 && 오른쪽 자식 노드가 존재한다면 오른쪽 하위 트리를 재귀적으로 탐색한다.
+
+코드로 작성하면 다음과 같다.
+
+```ts
+function search(node: Node | null, targetValue: unknown): Node | null {
+  if (node === null) return null
+
+  if (node.value === targetValue) return node
+
+  if (node.value > targetValue && node.left) return search(node.left, targetValue)
+
+  if (node.value < targetValue && node.right) return search(node.right, targetValue)
+
+  return null
+}
+```
+
+이진탐색의 장점은 탐색을 진행하면서 탐색공간을 절반씩 줄여나갈 수 있다는 점이다. 아무리 많은 데이터가 있어도 O(logN)의 시간복잡도로 탐색을 진행할 수 있다.
+
+### 반복적으로 구현하기
+
+재귀적 구현말고도 반복적으로도 구현할 수 있다. while문을 사용하여 탐색을 진행할 수 있다.
+
+```ts
+function search(node: Node | null, targetValue: unknown): Node | null {
+  while (node !== null && node.value !== targetValue) {
+    if (node.value > targetValue) node = node.left
+    else node = node.right
+  }
+
+  return node
+}
+```
+
+## 이진탐색 - 배열 vs 이진탐색트리
+
+정렬된 배열에서도 마찬가지로 이진탐색을 할 수 있다. 역시나 시간복잡도는 O(logN)으로 이진탐색트리의 시간복잡도와 같다.
+그렇다면 왜 배열 대신 트리를 사용해야할까? 오히려 트리를 만들고 포인터를 사용하는 메모리 비용과 코드 복잡성이 더 크지는 않을까?
+
+상황에 따라 트레이드오프를 고려해야한다. 앞에서도 말했듯이 이진탐색트리는 데이터가 동적인 경우에 장점을 가진다. 만약 데이터의 변화가 없고 정적인 경우라면 배열을 사용하는 것이 훨씬 효율적이다.
+데이터가 아무리 변경되어도 이진탐색트리는 탐색 구조를 유지하면서 데이터의 변경 효율성을 유지할 수 있다.
+
+## 이진탐색트리 - 노드 추가하기
+
+노드 추가하기는 탐색하는것과 같은 방법으로 시작한다. 루트 노드에서부터 탐색을 시작하면서 새로운 노드를 삽입할 원하는 위치를 찾는다.
+계속 탐색을 진행하다가 삽입을 원하는 위치를 찾으면 그 위치에 새로운 값을 가진 노드를 추가한다. 만약 이미 트리에 존재하는 값이라면 추가하지 않는다.
+
+재귀적인 방법으로 구현하면 다음과 같다.
+
+```ts
+function insert(node: Node | null, newValue: unknown) {
+  if (newValue === node.value) return
+
+  if (newValue < node.value) {
+    // 왼쪽 자식 노드가 없다면 그 위치에 새로운 노드를 추가한다.
+    if (node.left === null) node.left = new Node(newValue)
+    else insert(node.left, newValue)
+  } else {
+    // 오른쪽 자식 노드가 없다면 그 위치에 새로운 노드를 추가한다.
+    if (node.right === null) node.right = new Node(newValue)
+    else insert(node.right, newValue)
+  }
+}
+
+insert(root, 10)
+```
+
+정렬된 배열에서의 데이터 추가 연산비용은 O(N)이다. 왜냐하면 추가를 원하는 위치를 찾고 나머지 요소들을 밀어내면서 복사해야하기 때문이다.
+이진탐색트리에서 데이터 추가 연산비용은 O(logN)이다. 탐색과 같은 방식으로 동작하기 때문에 시간비용도 마찬가지로 탐색과 같다.
+
+## 이진탐색트리 - 노드 삭제하기
+
+삭제할 노드의 자식의 갯수에 따라서 처리하는 경우가 달라진다.
+
+1. 삭제할 노드의 자식이 없는 경우. 즉, leaf 노드를 삭제할 경우
+2. 삭제할 노드의 자식이 하나인 경우.
+3. 삭제할 노드의 자식이 두개인 경우.
+
+삭제하기 작업에서는 부모 노드의 포인터를 노드에 저장하는 방식을 사용하면 제거 작업이 훨씬 간단해진다.
+
+```ts
+class Node {
+  value: number
+  left: Node | null
+  right: Node | null
+  parent: Node | null // <--- 부모 노드의 포인터를 노드에 저장하는 방식
+
+  constructor(value: number) {
+    this.value = value
+    this.left = null
+    this.right = null
+    this.parent = null
+  }
+}
+```
+
+### 1번 케이스 - 자식이 없는 경우
+
+```md
+        10
+       /  \
+      5    15
+```
+
+위 트리에서 `5`를 삭제하는 것은 간단하다. 5를 찾은 후, 5의 부모 노드의 왼쪽 자식을 null로 만들어주면 된다.
+
+```ts
+function deleteNode(tree: BST, node: Node) {
+  if (tree.root === null || node === null) return null
+
+  // 1번 케이스
+  if (node.left === null && node.right === null) {
+    // 삭제할 노드가 루트 노드인 경우
+    if (node.parent === null) tree.root = null
+    // 삭제할 노드가 왼쪽 자식 노드인 경우
+    else if (node.parent.left === node) node.parent.left = null
+    // 삭제할 노드가 오른쪽 자식 노드인 경우
+    else node.parent.right = null
+  }
+}
+```
+
+### 2번 케이스 - 자식이 하나인 경우
+
+```md
+        10
+       /  \
+      5    15
+       \
+        7
+```
+
+다음 트리에서 `5`를 삭제하는 방법은 다음과 같다.
+
+1. 5를 찾는다.
+2. 5의 부모 노드의 왼쪽 자식을 5의 오른쪽 자식으로 만든다.
+3. 5의 오른쪽 자식을 5의 부모 노드의 왼쪽 자식으로 만든다.
+
+```ts
+function deleteNode(tree: BST, node: Node) {
+  if (tree.root === null || node === null) return null
+
+  // 2번 케이스 자식이 하나인 경우
+  if (node.left === null || node.right === null) {
+    let child = node.left || node.right
+    child.parent = node.parent
+
+    // 만약 삭제하려는 노드가 루트 노드라면 자식 노드를 루트 노드로 만든다.
+    if (node.parent === null) tree.root = child
+    // 삭제하려는 노드가 왼쪽 자식 노드라면 자식 노드를 왼쪽 자식 노드로 만든다.
+    else if (node.parent.left === node) node.parent.left = child
+    // 삭제하려는 노드가 오른쪽 자식 노드라면 자식 노드를 오른쪽 자식 노드로 만든다.
+    else node.parent.right = child
+  }
+}
+```
+
+1. 먼저 삭제할 노드의 하나뿐인 자식 노드를 참조할 변수 child를 만든다.
+2. 그리고 삭제할 노드가 부모 노드의 왼쪽 자식인지 오른쪽 자식인지 확인한다.
+3. 어느쪽 자식인지 확인한 후에 삭제할 노드의 자식 노드를 부모 노드의 자식 노드로 만든다.
+
+### 3번 케이스 - 자식이 두개인 경우
+
+```md
+        10
+       /  \
+      5    15
+          /  \
+         12   20
+```
+
+다음 트리에서 `10`을 삭제하는 경우는 복잡하다. `후속자` 노드를 찾아야한다.
+후속자 노드란 마치 후계자처럼 10 노드를 대신해서 그 위치에 들어갈 노드를 말한다. 기존에 존재하는 트리에서 어떤 값이 들어가야 이진탐색트리의 속성을 지키면서 트리구조를 유지할 수 있을까?
+주어진 트리에서 10 노드 대신 들어갈 노드는 12 노드이다. 12 노드는 5보다 크고 15보다 작다.
+
+그렇다면 후속자노드를 찾는 방법은 무엇일까?
+후속자는 항상 삭제할 노드의 오른쪽 하위 트리에서 찾을 수 있다는 것을 알 수 있다. 왜냐하면 삭제할 노드의 값을 대체해야하기 때문이다.
+위 트리에서 5보다(왼쪽 하위 트리) 크고 15보다(오른쪽 하위 트리) 작은 값을 가진 노드를 찾으면 된다.
+
+한 마디로 후속자는 삭제할 노드의 오른쪽 하위 트리에서 가장 작은 값을 가진 노드이다.
+
+따라서 자식이 두개인 노드를 삭제하는 방법은 다음과 같다.
+
+1. 후속자 노드를 찾는다.
+2. 후속자 노드를 삭제할 노드의 위치로 옮긴다.
+
+```ts
+function deleteNode(tree: BST, node: Node) {
+  if (tree.root === null || node === null) return null
+
+  // 3번 케이스 자식이 두개인 경우
+
+  // 후속자 노드의 후보는 삭제할 노드의 오른쪽 하위 트리에서 찾을 수 있다.
+  let successor = node.right
+
+  // 후속자 노드를 찾는다. 가장 작은 값을 가진 노드를 찾는다.
+  while (successor.left !== null) {
+    successor = successor.left
+  }
+
+  // 후속자 노드를 트리에서 삭제한다.
+  deleteNode(tree, successor)
+
+  // 삭제할 노드를 후속자 노드로 대체한다.
+
+  // 1. 삭제할 노드의 부모 노드의 포인터를 후속자 노드를 가리키도록 한다.
+
+  // 삭제할 노드가 루트 노드인 경우
+  if (node.parent === null) tree.root = successor
+  // 삭제할 노드가 왼쪽 자식 노드인 경우
+  else if (node.parent.left === node) node.parent.left = successor
+  // 삭제할 노드가 오른쪽 자식 노드인 경우
+  else node.parent.right = successor
+
+  // 2. 삭제할 노드의 자식 노드를 후속자 노드의 자식 노드로 만든다.
+  successor.left = node.left
+  node.left.parent = successor
+
+  successor.right = node.right
+  if (node.right !== null) node.right.parent = successor
+}
+```
+
+삭제할 노드의 자식노드와 후속자 노드를 연결할 때 주의해야할 점이 있는데, 만약 후속자가 제거된 노드의 오른쪽 자식인 경우 이미 제거된 상태이므로 연결할 수 없다.
+따라서 null을 먼저 확인하고 연결해야한다.
