@@ -77,7 +77,7 @@ module.exports = () => {
       remotePatterns: [
         {
           protocol: 'https',
-          hostname: 'picsum.photos',
+          hostname: 'contents.kyobobook.co.kr',
         },
       ],
       unoptimized,
