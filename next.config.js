@@ -77,7 +77,6 @@ module.exports = () => {
       remotePatterns: [
         {
           protocol: 'https',
-          hostname: 'contents.kyobobook.co.kr',
         },
       ],
       unoptimized,
