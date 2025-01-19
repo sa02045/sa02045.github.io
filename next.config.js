@@ -79,6 +79,14 @@ module.exports = () => {
           protocol: 'https',
           hostname: 'res.cloudinary.com',
         },
+        {
+          protocol: 'https',
+          hostname: 'sa02045.github.io',
+        },
+        {
+          protocol: 'https',
+          hostname: 'github.com',
+        },
       ],
     },
 
