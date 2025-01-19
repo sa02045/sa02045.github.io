@@ -73,14 +73,7 @@ module.exports = () => {
     eslint: {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
-    images: {
-      remotePatterns: [
-        {
-          protocol: 'https',
-        },
-      ],
-      unoptimized,
-    },
+
     async headers() {
       return [
         {
