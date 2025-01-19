@@ -73,6 +73,14 @@ module.exports = () => {
     eslint: {
       dirs: ['app', 'components', 'layouts', 'scripts'],
     },
+    images: {
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'res.cloudinary.com',
+        },
+      ],
+    },
 
     async headers() {
       return [
