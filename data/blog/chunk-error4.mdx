@@ -185,7 +185,10 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 export const useBearStore = create()(
-  persist((set, get) => ({ name: '', setName: (name: string) => set({ name }) }))
+  persist((set, get) => ({ name: '', setName: (name: string) => set({ name }) }), {
+    name: 'signup',
+    storage: createJSONStorage(() => sessionStorage),
+  })
 )
 ```
 
