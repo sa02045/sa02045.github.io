@@ -1,9 +1,9 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'Devjo ',
-  author: 'DevJo',
-  headerTitle: 'Devjo',
-  description: 'A blog created with Next.js and Tailwind.css',
+  title: 'seunghee',
+  author: 'seunghee',
+  headerTitle: 'seunghee',
+  description: 'FE Developer',
   language: 'ko',
   theme: 'system', // system, dark or light
   siteUrl: 'https://sa02045.github.io/',
@@ -12,7 +12,7 @@ const siteMetadata = {
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   email: 'address@yoursite.com',
   github: 'https://github.com/sa02045',
-  linkedin: 'https://www.linkedin.com',
+  // linkedin: 'https://www.linkedin.com',
   locale: 'ko-KR',
   // set to true if you want a navbar fixed to the top
   stickyNav: false,
@@ -72,7 +72,7 @@ const siteMetadata = {
       // example: https://giscus.app/themes/custom_example.css
       themeURL: '',
       // This corresponds to the `data-lang="en"` in giscus's configurations
-      lang: 'en',
+      lang: 'ko',
     },
   },
   search: {
