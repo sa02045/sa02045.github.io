@@ -11,7 +11,7 @@ const siteMetadata = {
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   email: 'address@yoursite.com',
-  github: 'https://github.com',
+  github: 'https://github.com/sa02045',
   linkedin: 'https://www.linkedin.com',
   locale: 'ko-KR',
   // set to true if you want a navbar fixed to the top
