@@ -1,0 +1,99 @@
+---
+title: '⏰ Promise.all()으로 원하는 시간동안 로딩 보여주기'
+date: '2023-07-12'
+summary: ''
+tags: ['javascript']
+---
+
+### ❗️ 요구사항
+
+아래와 같은 요구사항을 받았다.
+
+> 다음 화면으로 넘어가기 전, `로딩화면을 최소 2초` 보여주세요!
+
+개발자의 언어로 해석하면 다음과 같다.
+
+- 사용자가 버튼을 클릭하면 API를 호출한다.
+- API를 호출하는 동안 **최소 2초동안 로딩화면**을 보여준다.
+- API 호출이 완료되고 응답이 오면 다음 화면으로 넘어간다.
+
+개인적으로 다음과 같은 의문이 있었다.
+
+- 로딩화면을 왜 2초나 보여줘야할까?
+- 로딩화면은 최대한 짧게 보여주고 다음 화면을 빨리 보여주는 것이 좋지 않을까?
+
+하지만 함께 협업한 프로덕트 디자이너분은 사용자에게 `의도적인 로딩화면을 보여주어 사용자 경험을 증가시키고자` 하는 것 같았다. 금새 납득이 갔다. 그래서 유저에게 보여줄 애니메이션 로딩 화면도 열심히 만들어 주셨다.
+
+그렇다면 이제 남은건 개발자의 몫이다.
+
+어떻게 구현해야할까?
+
+### 🦑 문제 해결(1) - 접근편
+
+처음에는 단순하게 생각했다.
+서버 API 응답시간이 무척 빨랐기 때문에 비동기함수 delay함수를 구현하여 API 호출자체를 2초 늦추었다.
+
+```js
+// util/delay.ts
+export function delay(ms: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+
+setLoading(true)
+
+await delay(2000) // API 호출을 2초 늦춘다
+const portfolios = await fetchPortfolio()
+
+setLoading(false)
+```
+
+나름 작동하는것 같다. **하지만 이 코드는 문제가 있다**
+
+1. API 응답시간이 2초보다 느리다면 유저는 `2초이상 (delay 2초 + API 응답시간)` 로딩화면을 봐야한다.
+2. 명령형 코드이다. 다른 사람이 코드를 본다면 delay가 왜 필요한지, 코드를 파악하기 어렵다.
+
+`API 응답시간은 예측할 수 없다`는 점이 어려운 점이었다.
+
+### ⭐️ 문제해결(2) - 해결편
+
+어떻게 구현해야할까 고민을 하다가, 얼마전 내가 블로그에서 [Promise 동시성 메서드](https://velog.io/@sa02045/Promise-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%A9%94%EC%84%9C%EB%93%9C-%EC%A0%95%EB%A6%AC-db56hzqd)에 대해 정리한 내용이 생각났다.
+
+그 중 `Promise.all( )` 메서드를 활용하면 원하던 구현을 할 수 있을것 같다.
+
+### Promise.all() 메서드
+
+Promise.all() 메서드는 **인자로 받은 모든 Promise들이 resolve되어야만** 되기때문에 아래 같은 코드를 생각해 볼 수 있다.
+
+```js
+const [portfolios] = await Promise.all([fetchPortfolio, delay(2000])
+```
+
+- fetchPortfolio 응답시간이 2초보다 빠르다면, delay(2000)가 resolve 될 때 까지 2초를 기다린다.
+
+- fetchPortfolio 응답시간이 2초보다 느리다면, fetchPortfolio 응답이 오자마자 바로 응답한다.
+
+이 코드를 바로 사용해도 되지만, 이후에도 비슷한 케이스에 사용할 수 있도록 + 선언적으로 사용할 수 있도록 `유틸함수 delayFunction()`를 만들었다.
+
+```js
+// util/delayFunction.ts
+import { delay } from './delay';
+
+export async function delayFunction<T>(f: () => Promise<T>, ms: number): Promise<T> {
+  const [value] = await Promise.all([f(), delay(ms)]);
+  return value;
+}
+
+
+// 사용
+const portfolios = await delayFunction(fetchPortfolio, 2000);
+```
+
+원하던 구현이 완성되었다.
+
+### 😃 느낀 점
+
+- 프론트엔드 개발자는 사용자 경험을 위해 코드를 작성해야한다!
+- 블로그에서 정리한 것을 실제로 실무에서 써먹으니 뿌듯하다
