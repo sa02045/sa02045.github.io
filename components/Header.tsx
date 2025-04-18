@@ -15,14 +15,14 @@ const Header = () => {
       <Link href="/" aria-label={siteMetadata.headerTitle}>
         <div className="flex items-center justify-between">
           {typeof siteMetadata.headerTitle === 'string' ? (
-            <div className="hidden h-6 text-2xl sm:block">{siteMetadata.headerTitle}</div>
+            <div className="h-6 text-2xl">{siteMetadata.headerTitle}</div>
           ) : (
             siteMetadata.headerTitle
           )}
         </div>
       </Link>
       <div className="flex items-center space-x-4 leading-5 sm:space-x-6">
-        <div className="no-scrollbar hidden max-w-40 items-center space-x-4 overflow-x-auto sm:flex sm:space-x-6 md:max-w-72 lg:max-w-96">
+        <div className="no-scrollbar flex max-w-40 flex-row items-center space-x-4 overflow-x-auto sm:space-x-6 md:max-w-72 lg:max-w-96">
           {headerNavLinks
             .filter((link) => link.href !== '/')
             .map((link) => (
@@ -35,8 +35,6 @@ const Header = () => {
               </Link>
             ))}
         </div>
-        <ThemeSwitch />
-        <MobileNav />
       </div>
     </header>
   )
