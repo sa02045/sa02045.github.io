@@ -15,7 +15,7 @@ const siteMetadata = {
   linkedin: 'https://www.linkedin.com/in/%EC%8A%B9%ED%9D%AC-%EC%A1%B0-1144a41b6/',
   locale: 'ko-KR',
   // set to true if you want a navbar fixed to the top
-  stickyNav: false,
+  stickyNav: true,
   analytics: {
     // If you want to use an analytics provider you have to add it to the
     // content security policy in the `next.config.js` file.
