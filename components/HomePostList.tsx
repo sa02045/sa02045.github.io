@@ -35,11 +35,11 @@ export function HomePostList({ post }: Props) {
                     </dd>
                   </dl>
 
-                  <div className="ml-3">
+                  {/* <div className="ml-3">
                     {tags.map((tag) => (
                       <Tag key={tag} text={tag} />
                     ))}
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
