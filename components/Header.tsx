@@ -1,11 +1,27 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
 import Link from './Link'
-import MobileNav from './MobileNav'
-import ThemeSwitch from './ThemeSwitch'
 
 const Header = () => {
-  let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10'
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    handleScroll() // 초기 상태 설정
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
+  let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-4'
   if (siteMetadata.stickyNav) {
     headerClass += ' sticky top-0 z-50'
   }
@@ -15,7 +31,7 @@ const Header = () => {
       <Link href="/" aria-label={siteMetadata.headerTitle}>
         <div className="flex items-center justify-between">
           {typeof siteMetadata.headerTitle === 'string' ? (
-            <div className="h-6 text-2xl">{siteMetadata.headerTitle}</div>
+            <div className="h-6 text-2xl font-semibold">{siteMetadata.headerTitle}</div>
           ) : (
             siteMetadata.headerTitle
           )}
@@ -36,6 +52,10 @@ const Header = () => {
             ))}
         </div>
       </div>
+
+      <div
+        className={`absolute bottom-0 left-1/2 w-screen -translate-x-1/2 border-t border-gray-200 transition-opacity duration-200 dark:border-gray-800 ${isScrolled ? 'opacity-100' : 'opacity-0'}`}
+      ></div>
     </header>
   )
 }
