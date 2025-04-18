@@ -10,9 +10,9 @@ const siteMetadata = {
   siteRepo: 'https://github.com/sa02045/sa02045.github.io',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
-  email: 'address@yoursite.com',
+  email: 'sa02045@gmail.com',
   github: 'https://github.com/sa02045',
-  // linkedin: 'https://www.linkedin.com',
+  linkedin: 'https://www.linkedin.com/in/%EC%8A%B9%ED%9D%AC-%EC%A1%B0-1144a41b6/',
   locale: 'ko-KR',
   // set to true if you want a navbar fixed to the top
   stickyNav: false,
