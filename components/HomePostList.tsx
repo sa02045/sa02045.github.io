@@ -17,11 +17,11 @@ export function HomePostList({ post }: Props) {
   const { slug, date, title, summary, tags } = post
   return (
     <Link href={`/blog/${slug}`} aria-label={`Read more: "${title}"`}>
-      <li key={slug} className="py-12">
+      <li key={slug} className="py-8">
         <article>
           <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-            <div className="space-y-5 xl:col-span-3">
-              <div className="space-y-6">
+            <div className="space-y-3 xl:col-span-3">
+              <div className="space-y-2">
                 <div>
                   <h2 className="text-2xl font-bold leading-8 tracking-tight">{title}</h2>
                 </div>
@@ -30,7 +30,7 @@ export function HomePostList({ post }: Props) {
                 <div className="flex flex-wrap">
                   <dl>
                     <dt className="sr-only">Published on</dt>
-                    <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
+                    <dd className="text-base leading-6 text-gray-500 dark:text-gray-400">
                       <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
                     </dd>
                   </dl>
