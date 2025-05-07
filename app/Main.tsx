@@ -4,7 +4,7 @@ import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from 'pliny/utils/formatDate'
 import { HomePostList } from '@/components/HomePostList'
 
-const MAX_DISPLAY = 5
+const MAX_DISPLAY = 20
 
 export default function Home({ posts }) {
   return (
