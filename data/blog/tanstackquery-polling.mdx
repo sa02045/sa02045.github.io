@@ -1,0 +1,130 @@
+---
+title: 'TanStack Query를 활용한 Polling 구현하기'
+date: '2025-05-12'
+summary: 'Polling'
+tags: ['TanStack Query', 'Polling']
+---
+
+## Polling이란 무엇인가?
+
+Polling은 **클라이언트가 서버에 일정 주기로 요청을 보내 최신 데이터를 가져오는 방식**이다. 서버의 데이터가 자주 갱신되는 상황이라면, 사용자에게 가장 최근 상태의 데이터를 제공하는 것이 중요하다.
+
+오랜 요청이 걸리는 동작을 하게 되면 `사용자가 이탈하지 않도록 진행 상태`를 보여주는 방식이 필요하다. 사용자에게 무언가 진행되고 있다는 인상을 주기 위해, 서버는 progress 형태의 상태 데이터를 주기적으로 반환하도록 설계할 수 있다.
+
+이런 상황에서 Polling을 구현하여 클라이언트는 주기적으로 progress 상태를 확인하고, 값이 100에 도달하면 다음 단계로 전환하는 로직이 필요하다. 이 과정을 TanStack Query를 활용하여 구현할 수 있다.
+
+```tsx
+GET /api/progress → { progress: number }
+```
+
+## 1. GET 메서드를 이용한 Polling
+
+GET 요청 기반의 비동기 호출은 useQuery의 refetchInterval 옵션으로 쉽게 구현 가능하다. refetchInterval은 콜백에서 false를 반환하면 주기적인 요청을 중단한다.
+
+```tsx
+const { data } = useQuery({
+  queryKey: ['progress'],
+  queryFn: () => fetchProgress(),
+  refetchInterval(query) {
+    if (query.state.data?.progress === 100) {
+      return false
+    }
+    return 3000
+  },
+})
+```
+
+위 코드는 progress 값이 100에 도달할 때까지 3초마다 데이터를 요청하고, 이후 polling을 중지하는 방식이다. 가장 보편적이고 쉬운 방법이다.
+
+하지만 서버가 POST 메서드로 Polling을 구현해야하는 경우 상황이 다르다.
+
+POST 메서드는 서버에 상태 변화를 일으키는 요청이므로 Polling으로 사용하는 것이 적절하지는 않다. 일반적으로 Mutate를 일으키는 POST 메서드와 진행사항을 가져오는 GET 메서드를 분리해야 하지만, 실무에서는 API 설계가 정리되지 않았거나 개발 일정상 분리할 수 없는 경우도 발생한다. 이런 상황에서 POST 요청 기반의 Polling이 필요한 경우가 생긴다.
+
+TanStack Query를 활용하여 POST 메서드 기반의 Polling을 구현하는 방법은 다음과 같이 세 가지로 정리할 수 있다.
+
+1. useMutation + retry 옵션 활용
+2. useQuery를 통한 POST 요청
+3. useMutation + setTimeout을 조합한 Polling
+
+## 2. useMutation의 retry 옵션을 활용한 Polling
+
+retry 옵션은 기본적으로 실패한 요청을 자동 재시도하기 위한 옵션이다. 이를 Polling에 응용하려면, 조건이 충족되지 않았을 때 명시적으로 에러를 발생시켜 재요청을 유도하는 방식으로 활용할 수 있다.
+
+```tsx
+const [progress, setProgress] = useState<number>(0)
+
+const { mutate, data } = useMutation({
+  mutationFn: async () => {
+    const { progress } = await postProgress()
+    if (progress !== 100) {
+      setProgress(progress)
+      throw new PollingError('retry')
+    }
+    return progress
+  },
+  retry: true,
+  retryDelay: 1000,
+})
+```
+
+retry를 사용하는 방법은 `에러`를 던지기 때문에 `data`값을 사용할 수 없다. 따라서 useMutation의 값을 사용하는 것이 아니라 별도의 상태를 두어 progress를 관리해야한다.
+
+또한 retry는 본래 실패한 요청에 대해 재시도하기 위한 목적이므로, 단지 원하는 조건을 만족하지 않는다고 예외를 던지는 방식은 바람직하지 않다. 실제 네트워크 오류와 로직 조건 실패를 구분할 수 없게 된다.
+
+## 3. useQuery를 통한 POST 요청 Polling
+
+POST 메서드 비동기 요청은 useMutation만 사용할 수 있는것이 아닌가? 라고 생각할 수 있지만 useQuery를 사용해도 정상적으로 요청-응답이 가능하다. 구현방법은 GET 메서드를 사용하는 것과 동일하다.
+
+```tsx
+const { data } = useQuery({
+  queryKey: ['progress'],
+  queryFn: postProgress,
+  refetchInterval(query) {
+    if (query.state.data?.progress === 100) {
+      return false
+    }
+    return 1000
+  },
+})
+```
+
+기술적으로는 작동하지만, 이 방식은 TanStack Query의 철학과 맞지 않는다. useQuery는 데이터를 읽어오는 목적에 맞게 설계된 API이며, 사이드 이펙트를 유발하지 않아야 한다. 반면 POST 요청은 서버 상태를 변경할 수 있으며, 이와 같은 요청은 useMutation을 통해 처리하는 것이 의도에 부합한다
+
+또한 useQuery를 사용할 경우 background refetch, refetchOnWindowFocus와 같은 기능이 예상치 못한 부작용을 일으킬 수 있다. 이로 인해 예기치 않은 재요청이 발생하거나, 캐시 정책이 어긋나는 문제가 발생할 수 있다.
+
+## 4. useMutation과 setTimeout을 이용한 Polling
+
+보다 명확하고 제어 가능한 방식은 setTimeout과 useMutation을 조합하는 방법이다. 이 방식은 retry 옵션을 사용하지 않기 때문에 에러 핸들링과 조건 분기를 명확하게 할 수 있다.
+
+2번 방법의 문제점은 progress 데이터를 별도의 상태로 관리한다는 점이다. 이 코드를 제거하고 useMutation이 반환하는 데이터의 값을 그대로 사용하자. 그리고 재시도를 실행하는 로직을 retry 옵션을 사용하지 않고 setTimeout을 사용하여 mutate를 호출하도록 한다.
+
+```tsx
+const timerRef = useRef<number>(null)
+const { mutate, data } = useMutation({
+  mutationFn: async () => {
+    const { progress } = await postProgress()
+    if (progress !== 100) {
+      timerRef.current = setTimeout(() => {
+        mutate()
+      }, 1000)
+    }
+    return progress
+  },
+})
+
+useEffect(() => {
+  mutate()
+  return () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current)
+    }
+  }
+}, [mutate])
+```
+
+timerRef를 두어 유저가 페이지 이탈 시 setTimeout을 정리하여 메모리 누수 및 불필요한 요청을 방지할 수 있다.
+
+#### 교훈
+
+- Polling은 GET 요청을 통해 구현하는 것이 좋다.
+- 백엔드 개발자와 협업하여 서버의 사이드 이펙트를 발생시키는 POST 로직과 progress를 가져오는 GET 로직을 분리해서 구현하는 것이 좋다.
