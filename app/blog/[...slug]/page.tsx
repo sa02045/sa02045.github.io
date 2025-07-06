@@ -107,7 +107,7 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
   const Layout = layouts[post.layout || defaultLayout]
 
   return (
-    <>
+    <div className="pt-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -115,6 +115,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
         <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
       </Layout>
-    </>
+    </div>
   )
 }
