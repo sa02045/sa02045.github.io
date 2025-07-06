@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
 import Link from './Link'
-import MobileNav from './MobileNav'
 
 const Header = () => {
   const [show, setShow] = useState(true)
