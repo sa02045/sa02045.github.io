@@ -29,9 +29,6 @@ export function HomePostList({ post }: Props) {
               loading="lazy"
               width={192}
               height={108}
-              onError={(e) => {
-                e.currentTarget.src = '/static/images/placeholder.png'
-              }}
             />
           </div>
           {/* 정보가 오른쪽 */}
