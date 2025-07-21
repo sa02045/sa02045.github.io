@@ -1,7 +1,6 @@
 import 'css/prism.css'
 import 'katex/dist/katex.css'
 
-import PageTitle from '@/components/PageTitle'
 import { components } from '@/components/MDXComponents'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import { sortPosts, coreContent, allCoreContent } from 'pliny/utils/contentlayer'
@@ -56,7 +55,7 @@ export async function generateMetadata(props: {
       title: post.title,
       description: post.summary,
       siteName: siteMetadata.title,
-      locale: 'en_US',
+      locale: 'ko_KR',
       type: 'article',
       publishedTime: publishedAt,
       modifiedTime: modifiedAt,
@@ -107,7 +106,7 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
   const Layout = layouts[post.layout || defaultLayout]
 
   return (
-    <>
+    <div className="pt-16">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -115,6 +114,6 @@ export default async function Page(props: { params: Promise<{ slug: string[] }> 
       <Layout content={mainContent} authorDetails={authorDetails} next={next} prev={prev}>
         <MDXLayoutRenderer code={post.body.code} components={components} toc={post.toc} />
       </Layout>
-    </>
+    </div>
   )
 }

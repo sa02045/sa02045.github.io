@@ -2,6 +2,7 @@ import Link from '@/components/Link'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import { formatDate } from 'pliny/utils/formatDate'
+import Image from 'next/image'
 
 interface Props {
   post: {
@@ -18,31 +19,27 @@ export function HomePostList({ post }: Props) {
   return (
     <Link href={`/blog/${slug}`} aria-label={`Read more: "${title}"`}>
       <li key={slug} className="py-12">
-        <article>
-          <div className="space-y-2 xl:grid xl:grid-cols-4 xl:items-baseline xl:space-y-0">
-            <div className="space-y-5 xl:col-span-3">
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-2xl font-bold leading-8 tracking-tight">{title}</h2>
-                </div>
-                <div className="prose max-w-none text-gray-500 dark:text-gray-400">{summary}</div>
-
-                <div className="flex flex-wrap">
-                  <dl>
-                    <dt className="sr-only">Published on</dt>
-                    <dd className="text-base font-medium leading-6 text-gray-500 dark:text-gray-400">
-                      <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
-                    </dd>
-                  </dl>
-
-                  <div className="ml-3">
-                    {tags.map((tag) => (
-                      <Tag key={tag} text={tag} />
-                    ))}
-                  </div>
-                </div>
-              </div>
+        <article className="flex flex-col items-start gap-8 md:flex-row">
+          {/* 썸네일이 왼쪽 */}
+          <div className="h-32 w-48 flex-shrink-0 overflow-hidden rounded-2xl bg-gray-100">
+            <Image
+              src={`/blog/${slug}`}
+              alt={title + ' 썸네일'}
+              className="h-full w-full rounded-2xl object-cover"
+              loading="lazy"
+              width={192}
+              height={108}
+            />
+          </div>
+          {/* 정보가 오른쪽 */}
+          <div className="flex-1">
+            <div className="mb-2 flex items-center space-x-2 text-sm text-gray-500">
+              <span>
+                <time dateTime={date}>{formatDate(date, siteMetadata.locale)}</time>
+              </span>
             </div>
+            <h2 className="mb-4 text-2xl font-bold leading-tight text-gray-900">{title}</h2>
+            <p className="mb-4 text-lg leading-relaxed text-gray-500">{summary}</p>
           </div>
         </article>
       </li>
