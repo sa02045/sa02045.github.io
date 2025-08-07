@@ -1,0 +1,487 @@
+---
+title: 'TDD로 복잡한 도메인 로직 설계와 리팩터링하기'
+date: '2025-08-07'
+summary: 'TDD로 복잡한 도메인 로직 설계와 리팩터링하기'
+tags: ['tdd']
+hidden: true
+---
+
+## 들어가며
+
+<img
+  src="https://velog.velcdn.com/images/sa02045/post/076cd991-5bd2-421d-8db8-ab42e14d121d/image.png"
+  width="30%"
+  height="30"
+/>
+
+금융 서비스에서는 규제와 법적 요구사항으로 인해 복잡한 도메인 로직이 자주 등장합니다. 투자자 유형별 투자 한도 계산, 대출 한도 산정, 수수료 계산 등 수많은 비즈니스 규칙들이 코드로 표현되어야 합니다. 이런 상황에서 **테스트 주도 개발(TDD)**은 안정적이고 예측 가능한 코드를 작성하는 데 필수적인 도구가 됩니다.
+
+이번 글에서는 실제 금융 도메인에서 마주한 '투자 최대 금액 계산' 로직을 TDD 방식으로 어떻게 설계하고 리팩터링했는지, 그 과정에서 얻은 인사이트를 공유합니다.
+
+## 문제 상황 분석
+
+### 겉보기에는 단순한 UI, 실제로는 복잡한 비즈니스 로직
+
+아래는 단순히 금액을 입력받는 UI처럼 보이는 컴포넌트입니다. 하지만 실제로는 **금융위원회의 가이드라인**과 **자본시장법**에 따라 복잡한 제약 조건을 적용해야 합니다. [금융위원회 가이드라인](https://www.fsc.go.kr/po010101/74456?srchCtgry=1&curPage=&srchKey=sj&srchText=P2P%EB%8C%80%EC%B6%9C&srchBeginDt=&srchEndDt=)
+
+<img
+  src="https://velog.velcdn.com/images/sa02045/post/076cd991-5bd2-421d-8db8-ab42e14d121d/image.png"
+  width="30%"
+  height="30"
+/>
+
+이 간단해 보이는 입력 폼 뒤에는 다음과 같은 복잡한 계산 로직이 숨어있습니다:
+**투자자 유형별 분류**
+
+- 전문투자자: 금융투자업 종사자, 고액 자산가 등
+- 소득적격투자자: 일정 소득 이상의 개인투자자
+- 일반개인투자자: 일반적인 개인투자자
+
+**계산에 영향을 미치는 요소들**
+
+- 사용자의 예치금 잔액
+- 기존 투자 포트폴리오 규모
+- 해당 상품의 투자 위험도
+- 법정 투자 한도 규정
+- 개별 상품의 최소/최대 투자금액
+
+이러한 조건들이 서로 복합적으로 작용하기 때문에 **테스트 없이는 로직 검증이 어렵고, 리팩터링 시 버그 발생 위험이 매우 높습니다**.
+
+### 기존 코드의 문제점
+
+초기 구현은 다음과 같이 Vue.js 컴포넌트 메서드 내부에 모든 로직이 집중된 형태였습니다:
+
+```javascript
+// 기존의 문제있는 코드
+export default {
+  methods: {
+    getMaxInvestmentAmount() {
+      // 전역 상태에서 직접 참조
+      const userType = this.$store.getters.getUserType
+      const totalDeposit = this.$store.getters.getTotalDeposit
+      const existingInvestments = this.$store.getters.getInvestments
+
+      // 믹스인에서 가져온 상태
+      const productRiskLevel = this.productInfo.riskLevel
+      const mortgageLimit = this.getMortgageLimit()
+
+      // 복잡한 계산 로직이 컴포넌트에 직접 작성
+      if (userType === '전문투자자') {
+        if (productRiskLevel === 'HIGH') {
+          this.maxAmount = Math.min(totalDeposit * 0.8, mortgageLimit, 10000000)
+        } else {
+          this.maxAmount = totalDeposit
+        }
+      } else if (userType === '소득적격투자자') {
+        // 또 다른 복잡한 계산...
+      } else {
+        // 일반투자자 로직...
+      }
+
+      // 내부 상태 직접 변경
+      this.inputValue = Math.min(this.inputValue, this.maxAmount)
+    },
+  },
+}
+```
+
+**이 코드의 문제점들:**
+
+1. **암묵적 의존성**: 전역 상태(Vuex)와 믹스인에 강하게 결합
+2. **사이드 이펙트**: 내부 상태를 직접 변경하여 예측하기 어려움
+3. **테스트 불가능**: 컴포넌트 전체를 마운트해야만 테스트 가능
+4. **책임 분리 실패**: UI 로직과 비즈니스 로직이 혼재
+5. **유지보수 어려움**: 규정 변경 시 영향 범위를 파악하기 어려움
+
+## TDD 접근 방식으로 해결하기
+
+문제를 해결하기 위해 TDD의 **Red-Green-Refactor** 사이클을 적용했습니다.
+
+### 1단계: Red - 실패하는 테스트 먼저 작성
+
+우선 계산 로직에 대한 기대 동작을 테스트로 먼저 정의했습니다. 이때 중요한 것은 **명확한 입력값과 예상 출력값**을 정의하는 것입니다.
+
+```typescript
+// investmentCalculator.test.ts
+describe('투자 한도 계산기', () => {
+  describe('일반개인투자자', () => {
+    it('예치금이 5,000원 미만이면 투자 불가능', () => {
+      const input = {
+        investorType: '일반개인투자자',
+        totalDeposit: 4999,
+        productRiskLevel: 'MEDIUM',
+        existingInvestments: 0,
+      }
+
+      const result = calculateMaxInvestmentAmount(input)
+
+      expect(result).toEqual({
+        maxAmount: 0,
+        reason: '최소 예치금 부족',
+      })
+    })
+
+    it('예치금이 충분하면 예치금의 80%까지 투자 가능', () => {
+      const input = {
+        investorType: '일반개인투자자',
+        totalDeposit: 100000,
+        productRiskLevel: 'MEDIUM',
+        existingInvestments: 0,
+      }
+
+      const result = calculateMaxInvestmentAmount(input)
+
+      expect(result).toEqual({
+        maxAmount: 80000,
+        reason: null,
+      })
+    })
+
+    it('고위험 상품의 경우 예치금의 50%로 제한', () => {
+      const input = {
+        investorType: '일반개인투자자',
+        totalDeposit: 100000,
+        productRiskLevel: 'HIGH',
+        existingInvestments: 0,
+      }
+
+      const result = calculateMaxInvestmentAmount(input)
+
+      expect(result).toEqual({
+        maxAmount: 50000,
+        reason: null,
+      })
+    })
+  })
+
+  describe('전문투자자', () => {
+    it('예치금 전액 투자 가능', () => {
+      const input = {
+        investorType: '전문투자자',
+        totalDeposit: 10000000,
+        productRiskLevel: 'HIGH',
+        existingInvestments: 0,
+      }
+
+      const result = calculateMaxInvestmentAmount(input)
+
+      expect(result).toEqual({
+        maxAmount: 10000000,
+        reason: null,
+      })
+    })
+  })
+})
+```
+
+이 단계에서는 함수가 존재하지 않으므로 테스트가 실패합니다. 하지만 **요구사항을 명확히 정의**하는 중요한 역할을 합니다.
+
+### 2단계: Green - 테스트를 통과하는 최소한의 구현
+
+테스트를 통과할 수 있도록 가장 단순한 형태로 함수를 구현합니다:
+
+```typescript
+// investmentCalculator.ts
+export interface InvestmentInput {
+  investorType: '일반개인투자자' | '소득적격투자자' | '전문투자자'
+  totalDeposit: number
+  productRiskLevel: 'LOW' | 'MEDIUM' | 'HIGH'
+  existingInvestments: number
+}
+
+export interface InvestmentResult {
+  maxAmount: number
+  reason: string | null
+}
+
+export function calculateMaxInvestmentAmount(input: InvestmentInput): InvestmentResult {
+  const { investorType, totalDeposit, productRiskLevel } = input
+
+  // 최소 예치금 체크
+  if (totalDeposit < 5000) {
+    return {
+      maxAmount: 0,
+      reason: '최소 예치금 부족',
+    }
+  }
+
+  // 투자자 유형별 계산
+  switch (investorType) {
+    case '전문투자자':
+      return {
+        maxAmount: totalDeposit,
+        reason: null,
+      }
+
+    case '일반개인투자자':
+      const riskMultiplier = productRiskLevel === 'HIGH' ? 0.5 : 0.8
+      return {
+        maxAmount: Math.floor(totalDeposit * riskMultiplier),
+        reason: null,
+      }
+
+    case '소득적격투자자':
+      // 추후 구현
+      return {
+        maxAmount: Math.floor(totalDeposit * 0.9),
+        reason: null,
+      }
+
+    default:
+      throw new Error(`지원하지 않는 투자자 유형: ${investorType}`)
+  }
+}
+```
+
+이 시점에서 기본 테스트들이 통과하는지 확인합니다. 통과하면 다음 조건을 추가로 테스트하고 구현해나갑니다.
+
+### 3단계: Refactor - 컴포넌트에서 로직 분리
+
+이제 컴포넌트에서 복잡한 로직을 제거하고, 순수 함수로 분리된 계산기를 사용하도록 리팩터링합니다:
+
+```typescript
+// InvestmentInput.vue
+<template>
+  <div class="investment-input">
+    <input
+      v-model="inputAmount"
+      type="number"
+      :max="maxInvestmentAmount"
+      @input="validateAmount"
+    />
+    <p class="max-amount-info">
+      최대 투자 가능: {{ formatCurrency(maxInvestmentAmount) }}원
+    </p>
+    <p v-if="limitReason" class="limit-reason">
+      {{ limitReason }}
+    </p>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, computed, ref } from 'vue';
+import { calculateMaxInvestmentAmount } from '@/utils/investmentCalculator';
+
+export default defineComponent({
+  name: 'InvestmentInput',
+  props: {
+    userInfo: {
+      type: Object,
+      required: true
+    },
+    productInfo: {
+      type: Object,
+      required: true
+    }
+  },
+  setup(props) {
+    const inputAmount = ref(0);
+
+    // 계산 로직을 순수 함수로 위임
+    const investmentResult = computed(() => {
+      return calculateMaxInvestmentAmount({
+        investorType: props.userInfo.type,
+        totalDeposit: props.userInfo.totalDeposit,
+        productRiskLevel: props.productInfo.riskLevel,
+        existingInvestments: props.userInfo.existingInvestments
+      });
+    });
+
+    const maxInvestmentAmount = computed(() => investmentResult.value.maxAmount);
+    const limitReason = computed(() => investmentResult.value.reason);
+
+    const validateAmount = () => {
+      if (inputAmount.value > maxInvestmentAmount.value) {
+        inputAmount.value = maxInvestmentAmount.value;
+      }
+    };
+
+    return {
+      inputAmount,
+      maxInvestmentAmount,
+      limitReason,
+      validateAmount
+    };
+  }
+});
+</script>
+```
+
+### 4단계: 추가 요구사항 처리 - TDD 사이클 반복
+
+규정이 복잡해질수록 TDD 사이클을 반복하며 안전하게 기능을 확장합니다:
+
+```typescript
+// 새로운 요구사항: 기존 투자금 고려
+describe('기존 투자금이 있는 경우', () => {
+  it('기존 투자금과 신규 투자금 합계가 한도를 초과할 수 없음', () => {
+    const input = {
+      investorType: '일반개인투자자',
+      totalDeposit: 100000,
+      productRiskLevel: 'MEDIUM',
+      existingInvestments: 60000, // 이미 6만원 투자
+    }
+
+    const result = calculateMaxInvestmentAmount(input)
+
+    // 전체 한도 80000원 - 기존 투자 60000원 = 20000원
+    expect(result.maxAmount).toBe(20000)
+  })
+
+  it('기존 투자금이 한도를 초과한 경우 추가 투자 불가', () => {
+    const input = {
+      investorType: '일반개인투자자',
+      totalDeposit: 100000,
+      productRiskLevel: 'MEDIUM',
+      existingInvestments: 90000, // 한도 80000원을 초과
+    }
+
+    const result = calculateMaxInvestmentAmount(input)
+
+    expect(result).toEqual({
+      maxAmount: 0,
+      reason: '기존 투자금이 한도를 초과함',
+    })
+  })
+})
+```
+
+테스트를 작성한 후 구현을 업데이트합니다:
+
+```typescript
+export function calculateMaxInvestmentAmount(input: InvestmentInput): InvestmentResult {
+  // ... 기존 코드 ...
+
+  // 기본 한도 계산 후 기존 투자금 고려
+  let baseLimit: number
+
+  switch (investorType) {
+    case '전문투자자':
+      baseLimit = totalDeposit
+      break
+    case '일반개인투자자':
+      const riskMultiplier = productRiskLevel === 'HIGH' ? 0.5 : 0.8
+      baseLimit = Math.floor(totalDeposit * riskMultiplier)
+      break
+    // ... 다른 케이스들 ...
+  }
+
+  // 기존 투자금 고려
+  if (existingInvestments >= baseLimit) {
+    return {
+      maxAmount: 0,
+      reason: '기존 투자금이 한도를 초과함',
+    }
+  }
+
+  return {
+    maxAmount: baseLimit - existingInvestments,
+    reason: null,
+  }
+}
+```
+
+## 얻은 결과와 이점
+
+TDD 방식으로 리팩터링한 후 다음과 같은 구체적인 이점을 얻을 수 있었습니다:
+
+### 1. 빠른 피드백 루프
+
+```bash
+# 테스트 실행 결과
+$ npm test -- investmentCalculator.test.ts
+
+✓ 일반개인투자자 > 예치금이 5,000원 미만이면 투자 불가능
+✓ 일반개인투자자 > 예치금이 충분하면 예치금의 80%까지 투자 가능
+✓ 일반개인투자자 > 고위험 상품의 경우 예치금의 50%로 제한
+✓ 전문투자자 > 예치금 전액 투자 가능
+✓ 기존 투자금이 있는 경우 > 기존 투자금과 신규 투자금 합계가 한도를 초과할 수 없음
+
+Test Suites: 1 passed, 1 total
+Tests: 15 passed, 15 total
+Time: 0.847s
+```
+
+복잡한 계산 로직을 **몇 초 만에 검증**할 수 있게 되어 개발 속도가 크게 향상되었습니다.
+
+### 2. 안전한 리팩터링
+
+순수 함수로 분리된 로직은 외부 의존성이 없어 언제든지 안전하게 리팩터링할 수 있습니다:
+
+```typescript
+// 리팩터링 예시: 계산 로직을 더 세분화
+class InvestmentCalculator {
+  private calculateBaseLimit(input: InvestmentInput): number {
+    // 기본 한도 계산
+  }
+
+  private applyRiskAdjustment(baseLimit: number, riskLevel: string): number {
+    // 위험도별 조정
+  }
+
+  private applyExistingInvestments(limit: number, existing: number): number {
+    // 기존 투자금 반영
+  }
+
+  calculate(input: InvestmentInput): InvestmentResult {
+    // 조합하여 최종 결과 산출
+  }
+}
+```
+
+### 3. 관심사 분리
+
+컴포넌트는 이제 UI에만 집중하고, 비즈니스 로직은 별도 모듈에서 관리됩니다:
+
+```typescript
+// 컴포넌트 테스트는 UI 동작에만 집중
+describe('InvestmentInput 컴포넌트', () => {
+  it('최대 금액을 초과하여 입력하면 자동으로 최대값으로 조정', async () => {
+    const wrapper = mount(InvestmentInput, {
+      props: {
+        /* ... */
+      },
+    })
+
+    await wrapper.find('input').setValue(999999)
+
+    expect(wrapper.find('input').element.value).toBe('80000')
+  })
+})
+```
+
+### 테스트 케이스 설계 방법
+
+**경계값 테스트**를 반드시 포함하세요
+
+- 최소값, 최대값
+- 0, 음수, null, undefined
+- 타입별 경계값
+
+```typescript
+describe('경계값 테스트', () => {
+  it.each([
+    [4999, 0], // 최소값 - 1
+    [5000, 4000], // 최소값
+    [5001, 4000], // 최소값 + 1
+  ])('예치금 %i원일 때 최대 투자금은 %i원', (deposit, expected) => {
+    const result = calculateMaxInvestmentAmount({
+      investorType: '일반개인투자자',
+      totalDeposit: deposit,
+      productRiskLevel: 'MEDIUM',
+      existingInvestments: 0,
+    })
+
+    expect(result.maxAmount).toBe(expected)
+  })
+})
+```
+
+## 마무리
+
+TDD는 단순히 테스트를 먼저 작성하는 기법이 아닙니다. 복잡한 도메인 로직을 다룰 때 **설계 도구**로서 다음과 같은 가치를 제공합니다:
+
+1. **명확한 요구사항 정의**: 테스트가 곧 요구사항 문서가 됩니다
+2. **안전한 리팩터링**: 언제든지 안심하고 코드를 개선할 수 있습니다
+3. **빠른 피드백**: 복잡한 계산 로직을 즉시 검증할 수 있습니다
+4. **유지보수성**: 규정 변경 시 영향 범위를 쉽게 파악할 수 있습니다
