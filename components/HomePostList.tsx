@@ -21,7 +21,7 @@ export function HomePostList({ post }: Props) {
       <li key={slug} className="py-12">
         <article className="flex flex-col items-start gap-8 md:flex-row">
           {/* 썸네일이 왼쪽 */}
-          <div className="h-32 w-48 flex-shrink-0 overflow-hidden rounded-2xl bg-gray-100">
+          {/* <div className="h-32 w-48 flex-shrink-0 overflow-hidden rounded-2xl bg-gray-100">
             <Image
               src={`/blog/${slug}`}
               alt={title + ' 썸네일'}
@@ -30,7 +30,7 @@ export function HomePostList({ post }: Props) {
               width={192}
               height={108}
             />
-          </div>
+          </div> */}
           {/* 정보가 오른쪽 */}
           <div className="flex-1">
             <div className="mb-2 flex items-center space-x-2 text-sm text-gray-500">
