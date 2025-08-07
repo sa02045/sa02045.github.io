@@ -1,0 +1,255 @@
+---
+title: '쿠키차단 설정 시 발생하는 문제 해결하기'
+date: '2024-10-08'
+description: '쿠키차단 설정 시 발생하는 문제 해결하기'
+tags: ['storage', 'troubleshooting', '트러블슈팅']
+---
+
+## ❗️요구사항
+
+![](https://velog.velcdn.com/images/sa02045/post/a71b7d79-317e-4147-a42f-5242efe91056/image.png)
+
+쿠키 차단을 하면 홈페이지가 정상작동하지 않는다는 팀내 스레드가 올라왔다. 실제로 직접 재현을 해보니 아무것도 보이지 않고 하얀화면만 나왔따
+
+속이 덜컹 내려앉았지만 차분히 마음을 가라앉히고 우선 차근차근 원인을 파악해보았다.
+
+## ✋ 원인 파악 및 문제 분석
+
+우선은 브라우저를 열어 에러 콘솔을 확인해보았다. window 프러퍼티의 localStorage 접근문제인 것으로 보였다.
+
+![](https://velog.velcdn.com/images/sa02045/post/3ec74bc1-9dfb-4de1-900d-a54ab6ca44f8/image.png)
+
+LocalStorage가 브라우저에서 정상 작동하지 않는 경우는 여러 이유가 있다.
+
+- `서버사이드 렌더링`에서 window.localStorage를 참조하는 경우
+- 브라우저가 Storage API를 지원하지 않는 경우 (호환성)
+- 브라우저가 Storage에 대한 접근을 차단하는 경우 (보안)
+
+이번 이슈는 세 번째 경우로 `유저가 브라우저 설정에서 쿠키 차단`을 설정했을 때 일어난 것이다.
+
+![](https://velog.velcdn.com/images/sa02045/post/071f8612-0a93-4b27-a3de-87161696e1c4/image.png)
+
+> 쿠키차단 설정을 하면 유저의 개인정보보호를 위해 쿠키나 localStorage와 같이 브라우저에 데이터를 읽고 저장하는 기능을 차단시킨다.
+
+내부 코드에서 직접적으로 `window.localStorage에 직접 접근`하는 것이 문제의 원인이었다.
+
+이런식으로 접근을 하면 에러를 throw하는데 에러를 어느 곳에서도 잡지 않아 어플리케이션이 깨진 것이다.
+
+```js
+window.localStorage.setItem('key', value)
+// Uncaught DOMException: Failed to read the 'localStorage' property from 'Window'
+```
+
+이런 문제를 `처음` 접한 개발자는 두가지 선택지 중 하나를 선택해야한다. (내가 이런 선택지를 고민했다는 뜻은 아니다..😅)
+
+```
+a. 아 그거 원래 안되는 거에요~ 누가 쿠키 차단하고 브라우저를 사용하나요?
+그런 엣지케이스경우에는 대응안하는 것이 맞아요~
+
+vs
+
+b. 쿠키차단을 하고 사용하는 유저를 위해 문제를 해결해볼까?
+```
+
+a 선택지는 유저가 서비스에 대한 신뢰를 잃게하는 최악의 선택이다.
+
+개발자에게 안되는 것은 없다. 한 명의 유저를 위해서라도 문제를 해결해보자!
+
+## 🤔 문제 해결
+
+문제의 원인은 window.localStorage에 직접 접근했고 그 에러를 catch하지 않아서 발생했다.
+
+그렇다면 window.localStorage를 사용하는 기존의 모든 코드에 `try ~ catch`로 에러처리를 하면 해결이 될까?
+
+```js
+// 수십개의 파일에서 window.localStorage 참조 중...
+try {
+  window.localStorage
+} catch (e) {
+  // 에러 처리..
+}
+```
+
+이런식의 코드는 도움이 되지 않는다. 근본적인 문제를 파악하고 해결할 수 있어야한다. 근본적인 원인을 다시 되짚어본다면 `window.localStorage에 직접 접근`했기 때문에 발생했다.
+
+> 그렇다면 window.localStorage를 직접 사용하지 않는다.
+
+어떻게 직접 접근하지않고 stoarge를 사용할 수 있을까?
+
+window.localStorage는 브라우저, `환경에 따라 달라지는 제어할 수 없는 값`이다.
+
+**우리는 제어할 수 없는 window.localStorage를 우리가 제어할 수 있는 영역으로 끌어내려야한다.**
+
+`추상화` 또는 `레이어` 라고 불리는 아키텍처로 우리가 제어할 수 있는 `안전한 Storage`를 만들어보자.
+
+## ✅ SafeStorage
+
+window.localStorage에 직접 접근하는 것이 아니라 `safeStorage`라는 우리가 직접 정의한 레이어로만 접근할 것이다.
+
+<img
+  src="https://velog.velcdn.com/images/sa02045/post/20b6bdf2-a77c-4393-8b8c-a2b32f0e653e/image.png"
+  width="500"
+/>
+
+기본적인 전략은 다음과 같다.
+
+1. window.localStorage에 직접 접근하지 않고 SafeLocalStorage를 사용하여 접근한다.
+2. SafeLocalStorage는 다음과 같은 기능을한다
+
+- 2-1 브라우저가 window.localStorage를 지원하면 window.localStorage를 사용한다.
+- 2-1 지원하지 않는다면 자바스크립트로 동작하는 MemoryStorage를 사용한다.
+
+그렇다면 차근차근히 구현해보자
+
+### window.localStorage 접근 여부 확인
+
+[a brief history of detecting local storage](https://gist.github.com/paulirish/5558557)와 [MDN문서](https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API)를 읽어보면 다음 코드로 접근 여부를 확인할 수 있다. try ~ catch로 테스트 값을 직접 넣고 파악한다.
+
+```js
+// 브라우저의 localStorage 접근 여부
+function storageAvailable(type) {
+  let storage
+  try {
+    storage = window[type]
+    storage.setItem('TEST_KEY', 'TEST_VALUE')
+    storage.removeItem('TEST_KEY')
+    return true
+  } catch (e) {
+    return false
+  }
+}
+```
+
+```js
+export const safeLocalStorage = storageAvailable('localStorage')
+  ? new LocalStorage()
+  : new MemoryStorage()
+
+// Component.vue
+// 사용하는 곳에서는 safeLocalStorage를 사용한다.
+import { safeLocalStorage } from './utils/Storage'
+```
+
+벌써 코드의 절반을 작성했다. 이제 우리가 해야할 일은 `동일한 인터페이스`를 가진 LocalStorage와 MemoryStorage를 작성하는 것이다.
+
+`우리에게 이미 익숙한 표준 인터페이스`를 모티브 삼아 작성해보자.
+
+> 표준 인터페이스에 가까울수록 사용하기 편한다.
+
+```js
+// 표준 인터페이스
+window.localStorage.getItem('key')
+window.localStorage.setItem('key', value)
+window.localStorage.clear()
+
+// 우리가 만들 Storage의 인터페이스
+memoryStorage.getItem('key')
+memoryStorage.setItem('key', value)
+memoryStorage.removeItem('key')
+memoryStorage.clear()
+```
+
+```js
+// typescript 인터페이스
+
+export interface SafeStorage {
+  storage: Storage | Map<string, string>;
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem(key: string): void;
+  clear: () => void;
+}
+```
+
+### MemoryStorage 구현하기
+
+브라우저에서 제공하는 web API가 아닌 `자바스크립트로 동작하는 MemoryStorage`를 만들어보자.
+
+> 자바스크립트로 동작하기 때문에 브라우저 같은 외부 요인에 영향을 받지 않는다.
+
+엄연히 얘기하면 어플리케이션이 동작하는 동안에만 `데이터를 잠시만 저장`하기 때문에 브라우저를 닫거나, 새로고침을 한다거나 하면 날라가는 휘발성 데이터이다.
+
+당연하게도 storage가 차단되어있으면 브라우저에 데이터를 저장할 방법이 없으므로 임시방편으로 대신 제공하는 셈이다.
+
+단순 객체로 구현해도 되지만, ES6부터 지원되는 새로운 자료구조 `Map 객체`를 사용해보자.
+
+```js
+
+class MemoryStorage implements SafeStorage {
+  storage: Map<string, string>;
+
+  constructor() {
+    this.storage = new Map<string, string>();
+  }
+
+  getItem(key: string): string | null {
+    return this.storage.get(key) || null;
+  }
+
+  setItem(key: string, value: string): void {
+    this.storage.set(key, value);
+  }
+
+  removeItem(key: string): void {
+    this.storage.delete(key);
+  }
+
+  clear() {
+    this.storage.clear();
+  }
+}
+
+const memoryStorage = new MemoryStorage()
+memoryStorage.getItem('key')
+memoryStorage.setItme('key', value)
+```
+
+Map 객체의 `get` `set` `delete` 메서드를 사용하면 비슷한 인터페이스를 구현할 수 있다.
+
+### LocalStorage
+
+마찬가지로 우리의 인터페이스를 가지는 LocalStorage를 구현해보자. 인터페이스는 동일하기 떄문에 생성자의 storage를 제외한 모든 메서드는 Memory Storage와 동일하다
+
+```js
+class LocalStorage implements SafeStorage {
+  storage: Storage;
+
+  constructor() {
+    this.storage = window.localStorage;
+  }
+
+  getItem(key: string): string | null {
+    return this.storage.getItem(key) || null;
+  }
+
+  setItem(key: string, value: string): void {
+    this.storage.setItem(key, value);
+  }
+
+  removeItem(key: string): void {
+    this.storage.removeItem(key);
+  }
+
+  clear() {
+    this.storage.clear();
+  }
+}
+```
+
+야호! 이제 우리는 어떠한 상황에도 안전하게 Storage를 사용할 수 있다.
+
+```js
+export const safeLocalStorage = storageAvailable('localStorage')
+  ? new LocalStorage()
+  : new MemoryStorage()
+```
+
+## 🟢 정리
+
+1. 제어할수 없는 요소는 제어할 수 있는 영역으로 끌어내려야한다.
+2. `계층`을 두면 `강결합`되어 있는 요소를 분리하고 `느슨`하게 연결 할 수 있다.
+
+### 참고
+
+1. https://github.com/toss/slash/blob/main/packages/common/storage/src/storage.ts
+2. https://gist.github.com/paulirish/5558557
