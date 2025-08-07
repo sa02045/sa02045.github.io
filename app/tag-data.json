@@ -1,10 +1,15 @@
 {
+  "tdd": 1,
   "tanstack-query": 1,
   "polling": 1,
   "error": 4,
   "react": 3,
   "suspense": 1,
-  "ux": 1,
+  "ux": 2,
+  "timezone": 1,
+  "troubleshooting": 1,
+  "타임존": 1,
+  "트러블슈팅": 1,
   "javascript": 2,
   "typescript": 1
 }
