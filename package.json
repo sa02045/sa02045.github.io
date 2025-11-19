@@ -2,6 +2,7 @@
   "name": "tailwind-nextjs-starter-blog",
   "version": "2.3.0",
   "private": true,
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
