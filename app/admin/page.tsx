@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { redirect } from 'next/navigation'
+import Image from 'next/image'
 
 export default function AdminPage() {
   const [formData, setFormData] = useState({
@@ -242,7 +243,7 @@ export default function AdminPage() {
                   className="flex items-center justify-between rounded bg-gray-50 p-2 dark:bg-gray-800"
                 >
                   <div className="flex items-center gap-2">
-                    <img src={url} alt="" className="h-12 w-12 rounded object-cover" />
+                    <Image src={url} alt="" className="h-12 w-12 rounded object-cover" />
                     <span className="text-sm">{url}</span>
                   </div>
                   <button
